@@ -1,2 +1,2 @@
 # Distributed-ML-framework
-This project is based on a distributed Machine Learning framework. It's based on a client-server architecture. The client is able to create datasets, train different models,  get their metrics and do predictions with them. All of it over the salary from a Undergraduate/Postgraduate/Phd student.
+This project develops a distributed Machine Learning framework. It's based on a client-server architecture, distributing the tasks using different threads. The clients are able to create datasets, train different models, evaluate their metrics and inference with them. Mainly over the salary from a Undergraduate/Postgraduate/Phd students.
