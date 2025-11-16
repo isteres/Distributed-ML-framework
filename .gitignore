@@ -3,6 +3,7 @@
 .classpath
 .project
 .settings/
+.Comandos.txt
 
 # VS Code
 .vscode/
