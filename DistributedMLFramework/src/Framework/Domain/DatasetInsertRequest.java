@@ -1,15 +1,15 @@
 package Framework.Domain;
 import java.io.Serializable;
 
-// Class used to send the request of inserting a StudentWithSalary in a certain dataset
+// Class used to send the request of inserting a WorkerWithStudies in a certain dataset
 public class DatasetInsertRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String datasetName;
-    private StudentWithSalary studentWithSalary;
+    private WorkerWithStudies studentWithSalary;
 
-    public DatasetInsertRequest(String datasetName, StudentWithSalary student) {
+    public DatasetInsertRequest(String datasetName, WorkerWithStudies student) {
         this.datasetName = datasetName;
         this.studentWithSalary = student;
     }
@@ -18,7 +18,7 @@ public class DatasetInsertRequest implements Serializable {
         return this.datasetName;
     }
 
-    public StudentWithSalary getStudent() {
+    public WorkerWithStudies getStudent() {
         return this.studentWithSalary;
     }
 }

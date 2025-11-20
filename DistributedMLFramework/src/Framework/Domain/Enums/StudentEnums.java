@@ -2,51 +2,50 @@ package Framework.Domain.Enums;
 
 public class StudentEnums {
 
-
     public enum Country {
-        BRAZIL,
-        CHINA,
-        SPAIN,
-        PAKISTAN,
+        Brazil,
+        China,
+        Spain,
+        Pakistan,
         USA,
-        INDIA,
-        VIETNAM,
-        NIGERIA
+        India,
+        Vietnam,
+        Nigeria
     }
 
     public enum Gender {
-        MALE,
-        FEMALE,
-        OTHER
+        Male,
+        Female,
+        Other
     }
 
     public enum EducationalLevel {
-        BACHELOR,
-        MASTER,
-        PHD,
-        DIPLOMA
+        Bachelor,
+        Master,
+        PhD,
+        Diploma
     }
 
 
     public enum FieldOfStudy {
-        ARTS,
-        ENGINEERING,
+        Arts,
+        Engineering,
         IT,
-        HEALTH,
-        SOCIAL_SCIENCES,
-        BUSINESS
+        Health,
+        Social_Sciences,
+        Business
     }
 
 
     public enum EnglishProficiency {
-        BASIC,
-        INTERMEDIATE,
-        ADVANCED,
-        FLUENT
+        Basic,
+        Intermediate,
+        Advanced,
+        Fluent
     }
 
     public enum InternshipExperience {
-        YES,
-        NO
+        Yes,
+        No
     }
 }

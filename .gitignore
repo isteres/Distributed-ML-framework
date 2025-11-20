@@ -13,9 +13,10 @@ bin/
 out/
 *.class
 
+# Python part
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
-
 # Environments
 .venv
+/.metadata/

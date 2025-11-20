@@ -1,53 +1,86 @@
 package Framework.Server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
 import Framework.Domain.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class ConnectionHandler implements Runnable{
 	private Socket client;
+	private ExecutorService pool;
 	
-	public ConnectionHandler(Socket s) {
+	public ConnectionHandler(Socket s, ExecutorService p) {
 		this.client=s;
+		this.pool=p;		
 	}
 	
 	public void run() {
 		
+		ObjectOutputStream oout = null;
+		ObjectInputStream oin = null;
+		
 		try {
-			ObjectOutputStream oout = new ObjectOutputStream(this.client.getOutputStream());
-			ObjectInputStream oin = new ObjectInputStream(this.client.getInputStream());
-			
-			String line = oin.readLine();
-			
-			if(line.equals("INSERT_DATASET")) {
-				// Obtain and send the list of datasets
-				List<String> datasets = getDatasetFiles();
-				oout.writeObject(datasets);
-				oout.flush();
+			oout = new ObjectOutputStream(client.getOutputStream());
+			oin = new ObjectInputStream(client.getInputStream());
+
+			// Wait to  the client to close the connection(when he "exists")
+			//while(!client.isClosed()){
+			while(!this.client.isClosed()) {
 				
-				// Receive the request
-				DatasetInsertRequest di = (DatasetInsertRequest) oin.readObject();
+				String line = oin.readLine();
+					
+					switch (line) {
+					
+						case "INSERT_DATASET":
+							// Obtain and send the list of datasets
+							List<String> datasets = getDatasetFiles();
+							oout.writeObject(datasets);
+							oout.flush();
+							// Not necessity of reset, it'll only be used once
+							
+							// Receive the request 
+							DatasetInsertRequest direquest = (DatasetInsertRequest) oin.readObject();
+							this.pool.execute(new DatasetInserterThread(direquest));
+
+							oout.writeBytes("Inseting record in "+direquest.getDatasetName()+"...\n");
+							oout.flush();
+							
+							break;
+							
+						case "MODEL_TRAINING":
+							
+							break;
+						case "STUDENT_INFERENCE":
+							
+							break;
+					}	
+				}
 				
 				
-				oout.writeBytes("Inseting record in "+di.getDatasetName()+"...");
-				oout.flush();
-			}
-			
-			
-			
+		
 		}catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}catch(IOException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				// This will manage the Socket closing too
+				if(oin!=null) oin.close();
+				if(oout!=null) oout.close();
+				
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}
 	
+	
 	private List<String> getDatasetFiles() {
-	    File dir = new File("Datasets");   // relative path to your datasets folder
+		// Returns a list with all the files located in the directory "Datasets"
+	    File dir = new File("Datasets");  
 	    List<String> list = new ArrayList<>();
 
 	    if (!dir.exists() || !dir.isDirectory()) {

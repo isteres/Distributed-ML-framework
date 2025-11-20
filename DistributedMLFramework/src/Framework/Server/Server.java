@@ -1,6 +1,4 @@
 package Framework.Server;
-import Framework.Domain.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.*;
@@ -22,8 +20,8 @@ public class Server {
 				try {
 					Socket client = server.accept();
 					
-					// The PetitionHandler will manage all the connections
-					pool.execute(new ConnectionHandler(client));
+					// The ConnectionHandler will manage all the connections
+					pool.execute(new ConnectionHandler(client,pool));
 					
 				}catch(IOException excpClient) {
 					excpClient.printStackTrace();

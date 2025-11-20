@@ -1,7 +1,6 @@
 package Framework.Client;
 
 import Framework.Domain.*;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -33,7 +32,7 @@ public class Client {
 
                 switch (option) {
                     case "1":
-                        StudentWithSalary student = fillStudentForm();
+                        WorkerWithStudies student = fillStudentForm();
                         sendRecordToServer(oos, ois, student);
                         break;
 
@@ -57,15 +56,17 @@ public class Client {
 
         } catch (Exception e) {
             System.err.println("[ERROR] " + e.getMessage());
-            e.printStackTrace();
+        
+        } finally{
+            System.out.println("[INFO] Have a good one! Thanks for using our Distributed ML Framework.\n");
         }
     }
 
     private void printMenu() {
         System.out.println("\n========== CLIENT MENU ==========");
         System.out.println("1) Fill a form with your experience and help us to improve our datasets.");
-        System.out.println("2) Train model        [TODO]");
-        System.out.println("3) Make prediction    [TODO]");
+        System.out.println("2) Train machine learning model over chosen dataset and hyperparameters.");
+        System.out.println("3) Do inference with one");
         System.out.println("0) Exit");
         System.out.print("Select an option: ");
     }
@@ -76,48 +77,61 @@ public class Client {
     //                   INSERT DATASET (TEXT INPUT)
     // ============================================================
   
-    private StudentWithSalary fillStudentForm() {
-        System.out.println("\n--- Fill StudentWithSalary Form ---");
+    private WorkerWithStudies fillStudentForm() {
+        WorkerWithStudies student = null;
+        boolean validInput = false;
 
-        System.out.print("Country (Brazil, China, Spain, Pakistan, USA, India, Vietnam, Nigeria): ");
-        String country = sc.nextLine().trim();
+        while(!validInput){
+            try {
+                System.out.println("\n--- Fill the next form with your data ---");
 
-        System.out.print("Gender (Male, Female, Other): ");
-        String gender = sc.nextLine().trim();
+                System.out.print("Country (Brazil, China, Spain, Pakistan, USA, India, Vietnam, Nigeria): ");
+                String country = sc.nextLine().trim();
 
-        System.out.print("Educational Level (Bachelor, Master, PhD, Diploma): ");
-        String educationalLevel = sc.nextLine().trim();
+                System.out.print("Gender (Male, Female, Other): ");
+                String gender = sc.nextLine().trim();
 
-        System.out.print("Field of Study (Arts, Engineering, IT, Health, Social Sciences, Business): ");
-        String fieldOfStudy = sc.nextLine().trim();
+                System.out.print("Educational Level (Bachelor, Master, PhD, Diploma): ");
+                String educationalLevel = sc.nextLine().trim();
 
-        System.out.print("English Proficiency (Basic, Intermediate, Advanced, Fluent): ");
-        String englishProficiency = sc.nextLine().trim();
+                System.out.print("Field of Study (Arts, Engineering, IT, Health, Social Sciences, Business): ");
+                String fieldOfStudy = sc.nextLine().trim();
 
-        System.out.print("Internship Experience (Yes, No): ");
-        String internshipExperience = sc.nextLine().trim();
+                System.out.print("English Proficiency (Basic, Intermediate, Advanced, Fluent): ");
+                String englishProficiency = sc.nextLine().trim();
 
-        System.out.print("GPA (0–10): ");
-        float gpa = readFloat();
+                System.out.print("Internship Experience (Yes, No): ");
+                String internshipExperience = sc.nextLine().trim();
 
-        System.out.print("Age: ");
-        int age = readInt();
+                System.out.print("GPA (0–10): ");
+                float gpa = readFloat();
 
-        System.out.print("Salary: ");
-        int salary = readInt();
+                System.out.print("Age: ");
+                int age = readInt();
 
-        // Construct the student 
-        return new StudentWithSalary(
-    		country,
-            gender,
-            educationalLevel,
-            fieldOfStudy,
-            englishProficiency,
-            internshipExperience,
-            gpa,
-            age,
-            salary
-        );
+                System.out.print("Salary: ");
+                int salary = readInt();
+
+                student = new WorkerWithStudies(
+                    country,
+                    gender,
+                    educationalLevel,
+                    fieldOfStudy,
+                    englishProficiency,
+                    internshipExperience,
+                    gpa,
+                    age,
+                    salary
+                );
+                // At this point student has been created successfully
+                validInput = true;
+  
+            } catch (IllegalArgumentException e) {
+                System.out.println("[ERROR] You entered an invalid parameter. Please, fill the form again.\n");
+            }
+        }
+
+        return student;
     }
 
 
@@ -126,8 +140,9 @@ public class Client {
     //                    CLIENT-SERVER COMMUNICATION
     // ============================================================
 
-    private void sendRecordToServer(ObjectOutputStream oos, ObjectInputStream ois, StudentWithSalary student){
-    	try {
+    private void sendRecordToServer(ObjectOutputStream oos, ObjectInputStream ois, WorkerWithStudies student){
+    	
+        try {
 	        // Send command
 	        oos.writeBytes("INSERT_DATASET\n");
 	        oos.flush();
@@ -144,9 +159,10 @@ public class Client {
 	        String datasetName = sc.nextLine().trim().toLowerCase();
             DatasetInsertRequest di = new DatasetInsertRequest(datasetName,student);
 	
-	        // Send the DatasetInsertRequest object
+	        // Send the DatasetInsertRequest object and reset the stream 
 	        oos.writeObject(di);
 	        oos.flush();
+	        oos.reset();
 	
 	        // Read server response
 	        String response = ois.readLine();
