@@ -1,3 +1,0 @@
-Para ejecutar java desde la terminal:
-(desde src) javac Package.Class
-(desde src) java -cp . Package.Class
