@@ -3,7 +3,6 @@ package Framework.Server;
 import Framework.Domain.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -31,42 +30,42 @@ public class ConnectionHandler implements Runnable{
 			while(!this.client.isClosed()) {
 				
 				String line = oin.readLine();
-					
-					switch (line) {
-					
-						case "INSERT_DATASET":
-							// Send the list of datasets
-							oout.writeObject(this.datasets);
-							oout.flush();
-							// Not necessity of reset, it'll only be used once
-							
-							// Receive the request 
-							DatasetInsertRequest direquest = (DatasetInsertRequest) oin.readObject();
-							this.pool.execute(new DatasetInserterThread(direquest));
+				if(line == null) {
+					System.out.println("[INFO] Client "+ this.client.getInetAddress() + " disconnected.");
+					break;
+				}
+				switch (line) {
+				
+					case "INSERT_DATASET":
+						// Send the list of datasets
+						oout.writeObject(this.datasets);
+						oout.flush();
+						// Not necessity of reset, it'll only be used once
+						
+						// Receive the request 
+						DatasetInsertRequest direquest = (DatasetInsertRequest) oin.readObject();
+						this.pool.execute(new DatasetInserterThread(direquest));
 
-							oout.writeBytes("Inseting record in "+direquest.getDatasetName()+"...\n");
-							oout.flush();
-							
-							break;
-							
-						case "TRAIN_MODEL":
-							// Send the list of datasets
-							oout.writeObject(this.datasets);
-							oout.flush();
-							
-							TrainingRequest tr = (TrainingRequest) oin.readObject();
-							System.out.println(tr.getDatasetUsed());
-							
-							this.pool.execute(null);
-							
-							
-							
-							break;
-							
-						case "STUDENT_INFERENCE":
-							// Hacerlo con Future
-							break;
-					}	
+						oout.writeBytes("Inseting record in "+direquest.getDatasetName()+"...\n");
+						oout.flush();
+						
+						break;
+						
+					case "TRAIN_MODEL":
+						// Send the list of datasets
+						oout.writeObject(this.datasets);
+						oout.flush();
+						
+						TrainingRequest tr = (TrainingRequest) oin.readObject();
+						
+						this.pool.execute(new ModelTrainerThread(tr));
+
+						break;
+						
+					case "STUDENT_INFERENCE":
+						// Hacerlo con Future
+						break;
+				}	
 				}
 				
 				
