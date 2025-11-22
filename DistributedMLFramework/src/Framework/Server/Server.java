@@ -1,13 +1,17 @@
 package Framework.Server;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
-// In this class we find the Server that will be waiting petitions. It will
-// distribute the tasks in different threads in order to improve the efficiency
+// In this class we find the Server that will be waiting connections. It will
+// distribute every connection in a different thread in order to improve the efficiency
 public class Server {
 	
 	public static final int SERVER_PORT = 16666;
+	// The first version of the framework will have fixed datasets
+	public static final List<String> datasets = getDatasetFiles();
 	
 	public static void main(String[] args) {
 		//Cached pool that will manage the different tasks
@@ -20,8 +24,7 @@ public class Server {
 				try {
 					Socket client = server.accept();
 					
-					// The ConnectionHandler will manage all the connections
-					pool.execute(new ConnectionHandler(client,pool));
+					pool.execute(new ConnectionHandler(client,pool,datasets));
 					
 				}catch(IOException excpClient) {
 					excpClient.printStackTrace();
@@ -36,6 +39,28 @@ public class Server {
 			pool.shutdown();
 		}
 		
+	}
+	
+	private static List<String> getDatasetFiles() {
+		// Returns a list with all the files located in the directory "Datasets"
+	    File dir = new File("Datasets");  
+	    List<String> list = new ArrayList<>();
+
+	    if (!dir.exists() || !dir.isDirectory()) {
+	        System.err.println("[SERVER] Datasets directory not found!");
+	        return list;  
+	    }
+
+	    File[] files = dir.listFiles();
+	    if (files != null) {
+	        for (File f : files) {
+	            if (f.isFile()) {
+	                list.add(f.getName());
+	            }
+	        }
+	    }
+
+	    return list;
 	}
 
 }

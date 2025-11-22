@@ -10,10 +10,12 @@ import java.util.concurrent.*;
 public class ConnectionHandler implements Runnable{
 	private Socket client;
 	private ExecutorService pool;
+	private List<String> datasets;
 	
-	public ConnectionHandler(Socket s, ExecutorService p) {
+	public ConnectionHandler(Socket s, ExecutorService p, List<String> d) {
 		this.client=s;
 		this.pool=p;		
+		this.datasets=d;
 	}
 	
 	public void run() {
@@ -25,8 +27,7 @@ public class ConnectionHandler implements Runnable{
 			oout = new ObjectOutputStream(client.getOutputStream());
 			oin = new ObjectInputStream(client.getInputStream());
 
-			// Wait to  the client to close the connection(when he "exists")
-			//while(!client.isClosed()){
+			// Wait to  the client to close the connection(when he "exits")
 			while(!this.client.isClosed()) {
 				
 				String line = oin.readLine();
@@ -34,9 +35,8 @@ public class ConnectionHandler implements Runnable{
 					switch (line) {
 					
 						case "INSERT_DATASET":
-							// Obtain and send the list of datasets
-							List<String> datasets = getDatasetFiles();
-							oout.writeObject(datasets);
+							// Send the list of datasets
+							oout.writeObject(this.datasets);
 							oout.flush();
 							// Not necessity of reset, it'll only be used once
 							
@@ -49,11 +49,22 @@ public class ConnectionHandler implements Runnable{
 							
 							break;
 							
-						case "MODEL_TRAINING":
+						case "TRAIN_MODEL":
+							// Send the list of datasets
+							oout.writeObject(this.datasets);
+							oout.flush();
+							
+							TrainingRequest tr = (TrainingRequest) oin.readObject();
+							System.out.println(tr.getDatasetUsed());
+							
+							this.pool.execute(null);
+							
+							
 							
 							break;
-						case "STUDENT_INFERENCE":
 							
+						case "STUDENT_INFERENCE":
+							// Hacerlo con Future
 							break;
 					}	
 				}
@@ -78,26 +89,6 @@ public class ConnectionHandler implements Runnable{
 	}
 	
 	
-	private List<String> getDatasetFiles() {
-		// Returns a list with all the files located in the directory "Datasets"
-	    File dir = new File("Datasets");  
-	    List<String> list = new ArrayList<>();
-
-	    if (!dir.exists() || !dir.isDirectory()) {
-	        System.err.println("[SERVER] Datasets directory not found!");
-	        return list;  
-	    }
-
-	    File[] files = dir.listFiles();
-	    if (files != null) {
-	        for (File f : files) {
-	            if (f.isFile()) {
-	                list.add(f.getName());
-	            }
-	        }
-	    }
-
-	    return list;
-	}
+	
 
 }

@@ -3,8 +3,7 @@ package Framework.Client;
 import Framework.Domain.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Client {
 
@@ -37,7 +36,9 @@ public class Client {
                         break;
 
                     case "2":
-                        System.out.println("[INFO] Train model (TODO)");
+                        TrainingRequest tr = fillTrainingRequest();
+                        sendTrainingRequestToServer(oos,ois,tr);
+                        
                         break;
 
                     case "3":
@@ -55,10 +56,10 @@ public class Client {
             }
 
         } catch (Exception e) {
-            System.err.println("[ERROR] " + e.getMessage());
+            System.err.println("[ERROR] " + e.getMessage() + "(the server might be down).");
         
         } finally{
-            System.out.println("[INFO] Have a good one! Thanks for using our Distributed ML Framework.\n");
+            System.out.println("[INFO] Have a good one!");
         }
     }
 
@@ -66,10 +67,73 @@ public class Client {
         System.out.println("\n========== CLIENT MENU ==========");
         System.out.println("1) Fill a form with your experience and help us to improve our datasets.");
         System.out.println("2) Train machine learning model over chosen dataset and hyperparameters.");
-        System.out.println("3) Do inference with one");
-        System.out.println("0) Exit");
+        System.out.println("3) Do inference with one of our trained models.");
+        System.out.println("0) Exit.");
         System.out.print("Select an option: ");
     }
+
+    // ============================================================
+    //                   TRAIN MODEL
+    // ============================================================
+    private TrainingRequest fillTrainingRequest() {
+        System.out.println("\n--- Training Request Form ---");
+
+        System.out.println("Type the name of the model (one of the next options):");
+        System.out.println("1) Random Forest Regressor");
+        System.out.println("2) Gradient Boosting");
+        System.out.println("3) Linear Regression");
+        String modelName = sc.nextLine().trim();
+        Map<String, Integer> hyperparameters = new HashMap<>();
+        if(modelName.equals("Linear Regression")){
+            System.out.println("Linear Regression has no hyperparameters to set.");
+        }
+        else{
+            System.out.println("Enter hyperparameters n_estimators and max_depth(key=value format).");
+            System.out.println("Type 'done' when finished:");
+            
+            while (true) {
+                String line = sc.nextLine().trim();
+                if (line.equalsIgnoreCase("done")) {
+                    break;
+                }
+                String[] parts = line.split("=");
+                if (parts.length == 2) {
+                    hyperparameters.put(parts[0].trim(), (Integer) Integer.parseInt(parts[1].trim()));
+                } else {
+                    System.out.println("Invalid format. Please enter in key=value format.");
+                }
+            }
+        }
+
+        return new TrainingRequest(modelName, hyperparameters);
+    }
+
+    private void sendTrainingRequestToServer(ObjectOutputStream oos, ObjectInputStream ois, TrainingRequest tr){
+        try {
+            oos.writeBytes("TRAIN_MODEL\n");
+            oos.flush();
+
+            System.out.println("Over which dataset do you want to train the model?");
+            System.out.println("(Datasets available)");
+            List<String> datasets = (List<String>) ois.readObject();
+            for(String dataset : datasets) {
+                System.out.println(dataset);
+            }
+            String datasetName = sc.nextLine().trim().toLowerCase();
+            tr.setDatasetUsed(datasetName);
+            // The request is ready to be sent
+
+            oos.writeObject(tr);
+            oos.flush();
+            
+
+        } catch (IOException e) {
+        	e.printStackTrace();
+        } catch(ClassNotFoundException e) {
+        	e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -83,9 +147,9 @@ public class Client {
 
         while(!validInput){
             try {
-                System.out.println("\n--- Fill the next form with your data ---");
+                System.out.println("\n--- Please fill the next form with your data ---");
 
-                System.out.print("Country (Brazil, China, Spain, Pakistan, USA, India, Vietnam, Nigeria): ");
+                System.out.print("Insert your country (Brazil, China, Spain, Pakistan, USA, India, Vietnam, Nigeria): ");
                 String country = sc.nextLine().trim();
 
                 System.out.print("Gender (Male, Female, Other): ");
@@ -133,12 +197,6 @@ public class Client {
 
         return student;
     }
-
-
-
-    // ============================================================
-    //                    CLIENT-SERVER COMMUNICATION
-    // ============================================================
 
     private void sendRecordToServer(ObjectOutputStream oos, ObjectInputStream ois, WorkerWithStudies student){
     	

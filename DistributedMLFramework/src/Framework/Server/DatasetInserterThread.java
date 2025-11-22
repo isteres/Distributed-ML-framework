@@ -18,7 +18,7 @@ public class DatasetInserterThread implements Runnable{
 	
 	private DatasetInsertRequest inRequest;
 
-	// To manage the synchronized access to the dataset files
+	// To manage the synchronized access to the datasets files
 	private static final ConcurrentHashMap<String, Object> fileLocks = new ConcurrentHashMap<>();
 
 	public DatasetInserterThread(DatasetInsertRequest inRequest) {
@@ -32,7 +32,7 @@ public class DatasetInserterThread implements Runnable{
 		// If the lock does not exist, create it and put it in the map
 		if (lock == null) {
 			lock = new Object();
-			// Thread-safe operation due to ConcurrentHashMap
+			// Thread-safe operation thanks to ConcurrentHashMap
 			Object existingLock = fileLocks.putIfAbsent(fileName, lock);
 			if (existingLock != null) {
 				lock = existingLock;
@@ -87,7 +87,7 @@ public class DatasetInserterThread implements Runnable{
 				
 				root.appendChild(newRecord);
 				
-				// Guardar el documento modificado en el archivo original
+				// Save the updated 
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(datasetXML);

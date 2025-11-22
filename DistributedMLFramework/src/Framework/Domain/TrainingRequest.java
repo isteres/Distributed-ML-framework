@@ -7,11 +7,12 @@ public class TrainingRequest implements Serializable {
     
     private String modelName;
     private String datasetUsed;
-    private Map<String, String> hyperparameters;
+    private Map<String, Integer> hyperparameters;
     
-    public TrainingRequest(String modelName, String datasetUsed, Map<String, String> hyperparameters) {
+    // At the beginning the Request will be built without specifying the dataset 
+    public TrainingRequest(String modelName, Map<String, Integer> hyperparameters) {
         this.modelName = modelName;
-        this.datasetUsed = datasetUsed;
+        this.datasetUsed = null;
         this.hyperparameters = hyperparameters;
     }
 
@@ -21,8 +22,17 @@ public class TrainingRequest implements Serializable {
     public String getDatasetUsed() {
         return datasetUsed;
     }
-    public Map<String, String> getHyperparameters() {
+    public Map<String, Integer> getHyperparameters() {
         return hyperparameters;
+    }
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+    public void setDatasetUsed(String datasetUsed) {
+        this.datasetUsed = datasetUsed;
+    }   
+    public void setHyperparameters(Map<String,Integer> hyperparameters) {
+        this.hyperparameters = hyperparameters;
     }
     
 }

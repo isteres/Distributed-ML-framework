@@ -1,5 +1,11 @@
 package Framework.Domain;
 
-public class PredictionRequest {
+import java.io.Serializable;
+
+public class PredictionRequest implements Serializable {
+
+   
+
+
 
 }
