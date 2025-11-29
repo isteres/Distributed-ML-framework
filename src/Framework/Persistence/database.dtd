@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file defines the structure of the ServerDatabase XML file -->
 <!ELEMENT ServerDatabase (User*)>
-<!ELEMENT User (Model*)>
+<!ELEMENT User (TrainedModels*)>
 <!ATTLIST User
-    UserID ID #REQUIRED,
+    UserID ID #REQUIRED
     SignInDate CDATA #IMPLIED>
 
+<!ELEMENT TrainedModels EMPTY>

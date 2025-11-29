@@ -34,65 +34,107 @@ public class ConnectionHandler implements Runnable {
 		this.userID = userID;	
 	}
 
-	public void manageConnectedUser(String userID) {
+	public void manageConnectedUser(String userID, ObjectOutputStream oos, ObjectInputStream ois) {
+        if (connectedUsers.contains(userID)) {
+            System.out.println("[WARNING] User already connected: " + userID);
+            try {
+                oos.writeBytes("User already connected from another device.\n");
+                oos.flush();
+                manageDisconnectedUser(ois, oos);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
 		setUserID(userID);
 		connectedUsers.add(userID);
     	serverDatabase.registerUser(userID);
+
+        try {
+            oos.writeBytes("User " + userID + " signed in successfully.\n");
+            oos.writeBytes("\n");
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("[DATABASE] User " + userID + " signed in successfully.");
+
 	}
+
+    public void manageDisconnectedUser(ObjectInputStream oin, ObjectOutputStream oout) {
+        try {
+            // This will manage the Socket closing too
+            if (oin != null) {
+                oin.close();
+            }
+            if (oout != null) {
+                oout.close();
+            }
+            // Delete the user from the connected users list
+            if (this.getUserID() != null) {
+                connectedUsers.remove(this.getUserID());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     public void run() {
 
-        ObjectOutputStream oout = null;
-        ObjectInputStream oin = null;
+        ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
 
         try {
-            oout = new ObjectOutputStream(client.getOutputStream());
-            oin = new ObjectInputStream(client.getInputStream());
+            oos = new ObjectOutputStream(client.getOutputStream());
+            ois = new ObjectInputStream(client.getInputStream());
 
             // Wait to  the client to close the connection(when he "exits")
             while (!this.client.isClosed()) {
 
-                String line = oin.readLine();
+                String line = ois.readLine();
                 if (line == null) {
                     System.out.println("[INFO] " + this.getUserID() + ", connected from " + 
-					this.client + this.client.getInetAddress() + ":" + this.client.getPort() + " disconnected.");
+					this.client.getInetAddress() + ":" + this.client.getPort() + " disconnected.");
                     break;
                 }
 
                 switch (line) {
 
                     case "SIGN_IN":
-                        String userID = oin.readLine();
-						manageConnectedUser(userID);
+                        String userID = ois.readLine();
+						manageConnectedUser(userID, oos,ois );
 				
                         break;
 
                     case "INSERT_DATASET":
                         // Send the list of datasets
-                        oout.writeObject(this.datasets);
-                        oout.flush();
+                        oos.writeObject(this.datasets);
+                        oos.flush();
                         // Not necessity of reset, it'll only be used once
 
                         // Receive the request 
-                        DatasetInsertRequest direquest = (DatasetInsertRequest) oin.readObject();
+                        DatasetInsertRequest direquest = (DatasetInsertRequest) ois.readObject();
                         this.pool.execute(new DatasetInserterThread(direquest));
 
-                        oout.writeBytes("Inseting record in " + direquest.getDatasetName() + "...\n");
-                        oout.flush();
-
+                        oos.writeBytes("Inseting record in " + direquest.getDatasetName() + "...\n");
+                        oos.flush();
                         break;
 
                     case "TRAIN_MODEL":
                         // Send the list of datasets
-                        oout.writeObject(this.datasets);
-                        oout.flush();
+                        oos.writeObject(this.datasets);
+                        oos.flush();
 
-                        TrainingRequest tr = (TrainingRequest) oin.readObject();
+                        TrainingRequest tr = (TrainingRequest) ois.readObject();
 
                         this.pool.execute(new ModelTrainerThread(tr));
 
-						oout.writeBytes("Training model over " + tr.getDatasetUsed() + "...\n");
-                        oout.flush();
+						oos.writeBytes("Training model over " + tr.getDatasetUsed() + "...\n");
+                        oos .flush();
 
                         break;
 
@@ -109,22 +151,7 @@ public class ConnectionHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {
-                // This will manage the Socket closing too
-                if (oin != null) {
-                    oin.close();
-                }
-                if (oout != null) {
-                    oout.close();
-                }
-				// Delete the user from the connected users list
-				if (this.getUserID() != null) {
-					connectedUsers.remove(this.getUserID());
-				}
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            manageDisconnectedUser(ois, oos);
         }
 
     }

@@ -29,11 +29,9 @@ public class Client {
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());) {
 
             boolean exit = false;
-            oos.writeBytes("SIGN_IN\n");
-            oos.writeBytes(this.getUserID() + "\n");
-            oos.flush();
+            signIn(oos,ois);  
 
-            while (!exit) {
+            while (!exit ) {
                 printMenu();
                 String option = sc.nextLine().trim();
 
@@ -63,9 +61,11 @@ public class Client {
                 }
             }
 
-        } catch (Exception e) {
+        }catch(RuntimeException e){
+            System.err.println("[ERROR] " + e.getMessage());
+        } 
+        catch (Exception e) {
             System.err.println("[ERROR] " + e.getMessage() + "(the server might be down).");
-
         } finally {
             System.out.println("[INFO] Have a good one!");
         }
@@ -78,6 +78,21 @@ public class Client {
         System.out.println("3) Do inference with one of our trained models.");
         System.out.println("0) Exit.");
         System.out.print("Select an option: ");
+    }
+
+    private void signIn(ObjectOutputStream oos, ObjectInputStream ois) throws RuntimeException {
+        try {
+            oos.writeBytes("SIGN_IN\n");
+            oos.writeBytes(this.getUserID() + "\n");
+            oos.flush();
+            System.out.println(ois.readLine());
+            // Read the extra newline sent by server, would be null if the user tries to sign in from two devices
+            if(ois.readLine() == null) {
+                throw new RuntimeException("User already signed in from another device.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // ============================================================

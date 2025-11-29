@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file defines the structure of the dataset XML datasets used in the project-->
+<!ELEMENT dataset (record+)>
+<!ATTLIST dataset name CDATA #REQUIRED>
+
+<!ELEMENT record (
+  Country_of_Origin,
+  Education_Level,
+  Field_of_Study,
+  Language_Proficiency,
+  Gender,
+  Age,
+  Internship_Experience,
+  Salary,
+  GPA_10
+)>
+
+<!ELEMENT Country_of_Origin (#PCDATA)>
+<!ELEMENT Education_Level (#PCDATA)>
+<!ELEMENT Field_of_Study (#PCDATA)>
+<!ELEMENT Language_Proficiency (#PCDATA)>
+<!ELEMENT Gender (#PCDATA)>
+<!ELEMENT Age (#PCDATA)>
+<!ELEMENT Internship_Experience (#PCDATA)>
+<!ELEMENT Salary (#PCDATA)>
+<!ELEMENT GPA_10 (#PCDATA)>

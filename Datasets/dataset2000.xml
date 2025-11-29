@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?><dataset2000>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE dataset SYSTEM "dataset.dtd">
+<dataset name="dataset2000">
   <record>
     <Country_of_Origin>Nigeria</Country_of_Origin>
     <Education_Level>Master</Education_Level>
@@ -21999,4 +22001,4 @@
     <Salary>36832</Salary>
     <GPA_10>6.2</GPA_10>
   </record>
-</dataset2000>
+</dataset>

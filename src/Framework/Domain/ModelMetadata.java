@@ -34,7 +34,6 @@ public class ModelMetadata implements Serializable {
         this.datasetUsed = datasetUsed;
         this.hyperparameters = hyperparameters;
         this.metrics = metrics;
-        // this.modelType = modelType;
         this.trainedAt = LocalDateTime.now();
     }
 

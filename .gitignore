@@ -3,10 +3,6 @@
 .classpath
 .project
 .settings/
-<<<<<<< HEAD
-.Comandos.txt
-=======
->>>>>>> 50f8a76 (User database implemented)
 
 # VS Code
 .vscode/
@@ -22,14 +18,8 @@ __pycache__/
 
 # Environments
 .venv
-/.metadata/
+.metadata/
 TrainedModels/
-<<<<<<< HEAD
-
-# Myself
-comandos.txt
-=======
 database.xml
 
 
->>>>>>> 50f8a76 (User database implemented)

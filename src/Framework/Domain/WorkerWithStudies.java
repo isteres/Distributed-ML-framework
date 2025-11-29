@@ -1,7 +1,13 @@
 package Framework.Domain;
 
-import java.io.Serializable;
 import Framework.Domain.Enums.StudentEnums.*;
+import Framework.Domain.Enums.StudentEnums.Country;
+import Framework.Domain.Enums.StudentEnums.EducationalLevel;
+import Framework.Domain.Enums.StudentEnums.EnglishProficiency;
+import Framework.Domain.Enums.StudentEnums.FieldOfStudy;
+import Framework.Domain.Enums.StudentEnums.Gender;
+import Framework.Domain.Enums.StudentEnums.InternshipExperience;
+import java.io.Serializable;
 
 public class WorkerWithStudies implements Serializable {
 
@@ -19,7 +25,6 @@ public class WorkerWithStudies implements Serializable {
     private int salary;
 
     
-    // ===== CONSTRUCTOR =====
     public WorkerWithStudies(
     		String country,
             String gender,

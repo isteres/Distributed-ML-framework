@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<dataset10000>
+<!DOCTYPE dataset SYSTEM "dataset.dtd">
+<dataset name="dataset10000"> 
   <record>
     <Country_of_Origin>Nigeria</Country_of_Origin>
     <Education_Level>Master</Education_Level>
@@ -110000,4 +110001,4 @@
     <Salary>52649</Salary>
     <GPA_10>6.71</GPA_10>
   </record>
-</dataset10000>
+</dataset>

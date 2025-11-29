@@ -11,7 +11,7 @@ import org.w3c.dom.*;
 
 public class ServerDatabase {
 
-    private static final String FILE_PATH = "database.xml";
+    private static final String FILE_PATH = "src/Framework/Persistence/database.xml";
     private static final ServerDatabase instance = new ServerDatabase(FILE_PATH);
     private final File XMLfile;
 
@@ -31,12 +31,10 @@ public class ServerDatabase {
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 Document doc = db.newDocument();
 
-                Element root = doc.createElement("ServerUsers");
+                Element root = doc.createElement("ServerDatabase");
                 doc.appendChild(root);
 
-                TransformerFactory tf = TransformerFactory.newInstance();
-                Transformer transformer = tf.newTransformer();
-                transformer.transform(new DOMSource(doc), new StreamResult(XMLfile));
+                saveDocument(doc);
 
                 System.out.println("[DATABASE] File created: " + XMLfile.getAbsolutePath());
             } catch (Exception e) {
@@ -60,11 +58,15 @@ public class ServerDatabase {
                 System.out.println("[DATABASE] User already exists: " + userIdentification);
             } else {
                 Element root = doc.getDocumentElement();
+                Element models = doc.createElement("TrainedModels");
                 Element user = doc.createElement("User");
                 user.setAttribute("UserID", userIdentification);
                 user.setAttribute("SignInDate", getCurrentTimeStamp());
+                user.appendChild(models);
                 root.appendChild(user);
                 saveDocument(doc);
+                System.out.println("[DATABASE] User registered: " + userIdentification);
+
             }
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to register user: " + e.getMessage());
@@ -91,6 +93,10 @@ public class ServerDatabase {
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "database.dtd");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new DOMSource(doc), new StreamResult(XMLfile));
         } catch (TransformerException e) {
             System.err.println("[ERROR] Failed to save document: " + e.getMessage());

@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.*;
 import javax.xml.parsers.*;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
@@ -90,6 +87,8 @@ public class DatasetInserterThread implements Runnable{
 				// Save the updated 
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 				DOMSource source = new DOMSource(datasetXML);
 				StreamResult result = new StreamResult(dataset);
 				transformer.transform(source, result);
