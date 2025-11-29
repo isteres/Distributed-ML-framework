@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 <?xml version='1.0' encoding='utf-8'?>
 <dataset1000>
+=======
+<?xml version="1.0" encoding="utf-8" standalone="no"?><dataset1000>
+>>>>>>> 50f8a76 (User database implemented)
   <record>
     <Country_of_Origin>Nigeria</Country_of_Origin>
     <Education_Level>Master</Education_Level>
@@ -11000,4 +11004,8 @@
     <Salary>88361</Salary>
     <GPA_10>5.16</GPA_10>
   </record>
+<<<<<<< HEAD
 </dataset1000>
+=======
+<record><Country_of_Origin>China</Country_of_Origin><Education_Level>PhD</Education_Level><Field_of_Study>IT</Field_of_Study><Language_Proficiency>Fluent</Language_Proficiency><Gender>Other</Gender><Age>12</Age><Internship_Experience>No</Internship_Experience><Salary>33333</Salary><GPA_10>9.0</GPA_10></record><record><Country_of_Origin>Spain</Country_of_Origin><Education_Level>Master</Education_Level><Field_of_Study>IT</Field_of_Study><Language_Proficiency>Basic</Language_Proficiency><Gender>Male</Gender><Age>22</Age><Internship_Experience>Yes</Internship_Experience><Salary>17000</Salary><GPA_10>7.3</GPA_10></record><record><Country_of_Origin>USA</Country_of_Origin><Education_Level>PhD</Education_Level><Field_of_Study>IT</Field_of_Study><Language_Proficiency>Advanced</Language_Proficiency><Gender>Other</Gender><Age>24</Age><Internship_Experience>Yes</Internship_Experience><Salary>340000</Salary><GPA_10>8.3</GPA_10></record></dataset1000>
+>>>>>>> 50f8a76 (User database implemented)

@@ -1,8 +1,10 @@
 package Framework.Server;
 
+import Framework.Persistence.*;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -13,9 +15,13 @@ public class Server {
     public static final int SERVER_PORT = 16666;
     // The first version of the framework will have fixed datasets
     public static final List<String> datasets = getDatasetFiles();
+    // Initialize the server database
+    private static final ServerDatabase serverDatabase = ServerDatabase.getInstance();
+    // Connected users
+    private static final List<String> connectedUsers = Collections.synchronizedList(new ArrayList<>());
 
     public static void main(String[] args) {
-        //Cached pool that will manage the different tasks
+        
         ExecutorService pool = Executors.newCachedThreadPool();
 
         try (ServerSocket server = new ServerSocket(16666)) {
@@ -25,7 +31,7 @@ public class Server {
                 try {
                     Socket client = server.accept();
 
-                    pool.execute(new ConnectionHandler(client, pool, datasets));
+                    pool.execute(new ConnectionHandler(client, pool, datasets, serverDatabase, connectedUsers));
 
                 } catch (IOException excpClient) {
                     excpClient.printStackTrace();
