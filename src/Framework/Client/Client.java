@@ -99,7 +99,6 @@ public class Client {
     // TRAIN MODEL
     // ============================================================
 
-    // ...existing code...
     private TrainingRequest fillTrainingRequest() {
         System.out.println("\n--- Training Request Form ---");
         final String DEFAULT_TEST_SIZE = "0.2";
@@ -113,7 +112,7 @@ public class Client {
         System.out.println("1) Random Forest Regressor");
         System.out.println("2) Gradient Boosting Regressor");
         System.out.println("3) Linear Regression");
-        System.out.println("4) Neural Network Regressor");
+        System.out.println("4) Neural Network");
         System.out.print("Enter option (1-4): ");
 
         String algorithm = "";

@@ -89,10 +89,10 @@ public class ConnectionHandler implements Runnable {
         ObjectInputStream ois = null;
 
         try {
+            
             oos = new ObjectOutputStream(client.getOutputStream());
             ois = new ObjectInputStream(client.getInputStream());
 
-            // Wait to  the client to close the connection(when he "exits")
             while (!this.client.isClosed()) {
 
                 String line = ois.readLine();
@@ -112,7 +112,7 @@ public class ConnectionHandler implements Runnable {
 
                     case "INSERT_DATASET":
                         // Send the list of datasets
-                        oos.writeObject(this.datasets);
+                        oos.writeObject(datasets);
                         oos.flush();
                         // Not necessity of reset, it'll only be used once
 
@@ -131,7 +131,7 @@ public class ConnectionHandler implements Runnable {
 
                         TrainingRequest tr = (TrainingRequest) ois.readObject();
 
-                        this.pool.execute(new ModelTrainerThread(tr));
+                        this.pool.execute(new ModelTrainerThread(tr, this.getUserID()));
 
 						oos.writeBytes("Training model over " + tr.getDatasetUsed() + "...\n");
                         oos .flush();

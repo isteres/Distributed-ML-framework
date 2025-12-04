@@ -3,9 +3,7 @@ package Framework.Server;
 import Framework.Persistence.*;
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 // In this class we find the Server that will be waiting connections. It will
@@ -23,10 +21,13 @@ public class Server {
     public static void main(String[] args) {
         
         ExecutorService pool = Executors.newCachedThreadPool();
+        Timer dailyTimer = new Timer();
 
         try (ServerSocket server = new ServerSocket(16666)) {
             System.out.println("Server listening in the port " + SERVER_PORT);
 
+            dailyTimer.scheduleAtFixedRate(new DailyTrainingTask("dataset1000.xml"), 0, 24 * 60 * 60 * 1000);
+            
             while (true) {
                 try {
                     Socket client = server.accept();
@@ -42,6 +43,7 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+        	dailyTimer.cancel();
             pool.shutdown();
         }
 
@@ -60,7 +62,7 @@ public class Server {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File f : files) {
-                if (f.isFile()) {
+                if (f.isFile()&& !f.getName().endsWith(".dtd")) {
                     list.add(f.getName());
                 }
             }

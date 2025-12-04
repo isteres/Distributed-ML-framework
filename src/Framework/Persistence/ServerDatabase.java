@@ -74,6 +74,8 @@ public class ServerDatabase {
         }
     }
 
+    //public synchronized void registerTrainedModel(String userID, )
+
     private boolean userExists(Document doc, String userIdentification) {
         NodeList users = doc.getElementsByTagName("User");
         for (int i = 0; i < users.getLength(); i++) {
