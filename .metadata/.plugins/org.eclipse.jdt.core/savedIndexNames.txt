@@ -1,5 +1,0 @@
-INDEX VERSION 1.134+C:\Users\User\DistriProject\.metadata\.plugins\org.eclipse.jdt.core
-1587172633.index
-915675328.index
-1865797976.index
-279051806.index
