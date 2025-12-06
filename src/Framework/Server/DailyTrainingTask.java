@@ -16,38 +16,38 @@ public class DailyTrainingTask extends TimerTask {
 
     @Override
     public void run() {
+        
         System.out.println("[DAILY TRAINING] Starting automatic daily model training...");
 
         ExecutorService pool = Executors.newFixedThreadPool(4);
-        CyclicBarrier syncStart = new CyclicBarrier(4);
+        CyclicBarrier syncStart = new CyclicBarrier(5);
         CountDownLatch doneSignal = new CountDownLatch(4);
 
         try {
-            // Train RandomForest
+            
+            // Train one model of each algorithm
             TrainingRequest rf = createTrainingRequest("Server_RandomForest", "RandomForest");
             pool.execute(new ModelTrainerThread(rf, "SERVER", syncStart, doneSignal));
 
-            // Train GradientBoosting
             TrainingRequest gb = createTrainingRequest("Server_GradientBoosting", "GradientBoosting");
             pool.execute(new ModelTrainerThread(gb, "SERVER", syncStart, doneSignal));
 
-            // Train LinearRegression
             TrainingRequest lr = createTrainingRequest("Server_LinearRegression", "LinearRegression");
             pool.execute(new ModelTrainerThread(lr, "SERVER", syncStart, doneSignal));
 
-            // Train NeuralNetwork
             TrainingRequest nn = createTrainingRequest("Server_NeuralNetwork", "NeuralNetwork");
             pool.execute(new ModelTrainerThread(nn, "SERVER", syncStart, doneSignal));
 
+            syncStart.await();
             System.out.println("[DAILY TRAINING] Scheduled 4 training tasks.");
-
-            // Esperar a que todos terminen
             doneSignal.await();
             System.out.println("[DAILY TRAINING] All 4 training tasks completed.");
 
         } catch (InterruptedException e) {
             System.err.println("[DAILY TRAINING] Training tasks interrupted.");
             Thread.currentThread().interrupt();
+        } catch(BrokenBarrierException e) {
+            System.err.println("[DAILY TRAINING] Barrier broken.");
         } finally {
             pool.shutdown();
 

@@ -1,8 +1,8 @@
 # Java part
-# Eclipse
 .classpath
 .project
 .settings/
+.metadata/
 
 # VS Code
 .vscode/
@@ -12,14 +12,13 @@ bin/
 out/
 *.class
 
-# Python part
-# Byte-compiled / optimized / DLL files
-__pycache__/
-
-# Environments
-.venv
-.metadata/
+# Trained models and runtime database
 TrainedModels/
 database.xml
+
+# Python part
+__pycache__/
+.venv
+
 
 

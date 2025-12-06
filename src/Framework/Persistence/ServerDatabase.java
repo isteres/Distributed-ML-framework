@@ -74,7 +74,80 @@ public class ServerDatabase {
         }
     }
 
-    //public synchronized void registerTrainedModel(String userID, )
+    public synchronized void registerTrainedModel(String userID, String modelName, String algorithm, 
+                                                   String dataset, float r2Score, float mae) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(XMLfile);
+
+            Element userElement = findUserElement(doc, userID);
+            if (userElement == null) {
+                System.err.println("[ERROR] User not found: " + userID);
+                return;
+            }
+
+            NodeList trainedModelsNodes = userElement.getElementsByTagName("TrainedModels");
+            Element trainedModelsElement;
+            
+            if (trainedModelsNodes.getLength() > 0) {
+                trainedModelsElement = (Element) trainedModelsNodes.item(0);
+            } else {
+                trainedModelsElement = doc.createElement("TrainedModels");
+                userElement.appendChild(trainedModelsElement);
+            }
+
+            // Create Model wrapper element
+            Element modelElement = doc.createElement("Model");
+            
+            // Create child elements
+            Element nameElement = doc.createElement("Name");
+            nameElement.setAttribute("TrainingDate", getCurrentTimeStamp());
+            nameElement.setTextContent(modelName);
+
+            Element algorithmElement = doc.createElement("Algorithm");
+            algorithmElement.setTextContent(algorithm);
+
+            Element datasetElement = doc.createElement("Dataset");
+            datasetElement.setTextContent(dataset);
+
+            Element metricsElement = doc.createElement("Metrics");
+            
+            Element r2Element = doc.createElement("R2Score");
+            r2Element.setTextContent(Float.toString(r2Score));
+            
+            Element maeElement = doc.createElement("MeanAbsoluteError");
+            maeElement.setTextContent(Float.toString(mae));
+
+            metricsElement.appendChild(r2Element);
+            metricsElement.appendChild(maeElement);
+            
+            modelElement.appendChild(nameElement);
+            modelElement.appendChild(algorithmElement);
+            modelElement.appendChild(datasetElement);
+            modelElement.appendChild(metricsElement);
+
+            trainedModelsElement.appendChild(modelElement);
+
+            saveDocument(doc);
+            System.out.println("[DATABASE] Model registered: " + modelName + " for user " + userID);
+
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to register model: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private Element findUserElement(Document doc, String userID) {
+        NodeList users = doc.getElementsByTagName("User");
+        for (int i = 0; i < users.getLength(); i++) {
+            Element user = (Element) users.item(i);
+            if (userID.equals(user.getAttribute("UserID"))) {
+                return user;
+            }
+        }
+        return null;
+    }
 
     private boolean userExists(Document doc, String userIdentification) {
         NodeList users = doc.getElementsByTagName("User");
@@ -88,7 +161,7 @@ public class ServerDatabase {
     }
 
     private static String getCurrentTimeStamp() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy"));
     }
 
     private void saveDocument(Document doc) {

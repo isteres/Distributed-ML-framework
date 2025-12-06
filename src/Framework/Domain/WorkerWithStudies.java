@@ -1,6 +1,5 @@
 package Framework.Domain;
 
-import Framework.Domain.Enums.StudentEnums.*;
 import Framework.Domain.Enums.StudentEnums.Country;
 import Framework.Domain.Enums.StudentEnums.EducationalLevel;
 import Framework.Domain.Enums.StudentEnums.EnglishProficiency;
@@ -20,9 +19,9 @@ public class WorkerWithStudies implements Serializable {
     private EnglishProficiency englishProficiency;
     private InternshipExperience internshipExperience;
 
-    private float gpa;
-    private int age;
-    private int salary;
+    private Float gpa;
+    private Integer age;
+    private Integer salary;
 
     
     public WorkerWithStudies(
@@ -32,9 +31,9 @@ public class WorkerWithStudies implements Serializable {
             String fieldOfStudy,
             String englishProficiency,
             String internshipExperience,
-            float gpa,
-            int age,
-            int salary) {
+            Float gpa,
+            Integer age,
+            Integer salary) {
 
     	this.country = Country.valueOf(normalizeInput(country));
     	this.gender = Gender.valueOf(normalizeInput(gender));
@@ -49,8 +48,11 @@ public class WorkerWithStudies implements Serializable {
     }
     
     private String normalizeInput(String str) {
-    	// To normalize the string, so we mantain the string format in the dataset
-        if (str == null || str.isEmpty()) return str;
+        /*
+         To normalize the string, so we mantain the string format
+         in the dataset avoiding naming issues when training the models.  
+         */
+    	if (str == null || str.isEmpty()) return str;
         str = str.trim().toLowerCase();
         if(str.equals("phd")) {return "PhD";}
         if(str.equals("it")) {return "IT";}
@@ -61,41 +63,25 @@ public class WorkerWithStudies implements Serializable {
     }
 
 
-    // ===== GETTERS =====
     public Country getCountry() { return this.country; }
     public Gender getGender() { return this.gender; }
     public EducationalLevel getEducationalLevel() { return this.educationalLevel; }
     public FieldOfStudy getFieldOfStudy() { return fieldOfStudy; }
     public EnglishProficiency getEnglishProficiency() { return englishProficiency; }
     public InternshipExperience getInternshipExperience() { return internshipExperience; }
-    public float getGpa() { return gpa; }
-    public int getAge() { return age; }
-    public int getSalary() { return salary; }
+    public Float getGpa() { return gpa; }
+    public Integer getAge() { return age; }
+    public Integer getSalary() { return salary; }
 
-    // ===== SETTERS =====
     public void setCountry(Country country) { this.country = country; }
     public void setGender(Gender gender) { this.gender = gender; }
     public void setEducationalLevel(EducationalLevel educationalLevel) { this.educationalLevel = educationalLevel; }
     public void setFieldOfStudy(FieldOfStudy fieldOfStudy) { this.fieldOfStudy = fieldOfStudy; }
     public void setEnglishProficiency(EnglishProficiency englishProficiency) { this.englishProficiency = englishProficiency; }
     public void setInternshipExperience(InternshipExperience internshipExperience) { this.internshipExperience = internshipExperience; }
-    public void setGpa(float gpa) { this.gpa = gpa; }
-    public void setAge(int age) { this.age = age; }
-    public void setSalary(int salary) { this.salary = salary; }
+    public void setGpa(Float gpa) { this.gpa = gpa; }
+    public void setAge(Integer age) { this.age = age; }
+    public void setSalary(Integer salary) { this.salary = salary; }
 
-    // ===== toString =====
-    @Override
-    public String toString() {
-        return "WorkerWithStudies{" +
-                "country=" + country +
-                ", gender=" + gender +
-                ", educationalLevel=" + educationalLevel +
-                ", fieldOfStudy=" + fieldOfStudy +
-                ", englishProficiency=" + englishProficiency +
-                ", internshipExperience=" + internshipExperience +
-                ", gpa=" + gpa +
-                ", age=" + age +
-                ", salary=" + salary +
-                '}';
-    }
+  
 }

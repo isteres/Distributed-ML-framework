@@ -12,7 +12,7 @@ public class Server {
 
     public static final int SERVER_PORT = 16666;
     // The first version of the framework will have fixed datasets
-    public static final List<String> datasets = getDatasetFiles();
+    public static final List<String> datasets = Server.getDatasetFiles();
     // Initialize the server database
     private static final ServerDatabase serverDatabase = ServerDatabase.getInstance();
     // Connected users
@@ -48,6 +48,42 @@ public class Server {
         }
 
     }
+
+    public static List<String> getAvailableModels(String userID) {
+        List<String> allModels = new ArrayList<>();
+        
+        // Always add server models
+        allModels.addAll(getModelsFromDirectory("SERVER"));
+        
+        // Add user-specific models if different from SERVER
+        if (userID != null && !userID.equals("SERVER")) {
+            allModels.addAll(getModelsFromDirectory(userID));
+        }
+        
+        return allModels;
+    }
+
+ 
+    private static List<String> getModelsFromDirectory(String ownerID) {
+        List<String> models = new ArrayList<>();
+        File modelDir = new File("TrainedModels", ownerID);
+        
+        if (!modelDir.exists() || !modelDir.isDirectory()) {
+            return models;
+        }
+        
+        // Filter only .pkl model files, maybe in the future we add different file types to the directories
+        File[] files = modelDir.listFiles((dir, name) -> name.endsWith("_model.pkl"));
+        if (files != null) {
+            for (File file : files) {
+                String modelName = file.getName().replace("_model.pkl", "");
+                models.add(modelName);
+            }
+        }
+        
+        return models;
+    }
+
 
     private static List<String> getDatasetFiles() {
         // Returns a list with all the files located in the directory "Datasets"

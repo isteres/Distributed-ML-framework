@@ -38,7 +38,7 @@ public class ConnectionHandler implements Runnable {
         if (connectedUsers.contains(userID)) {
             System.out.println("[WARNING] User already connected: " + userID);
             try {
-                oos.writeBytes("User already connected from another device.\n");
+                oos.writeBytes("User already connected from another device.\r\n");
                 oos.flush();
                 manageDisconnectedUser(ois, oos);
             } catch (IOException e) {
@@ -52,8 +52,8 @@ public class ConnectionHandler implements Runnable {
     	serverDatabase.registerUser(userID);
 
         try {
-            oos.writeBytes("User " + userID + " signed in successfully.\n");
-            oos.writeBytes("\n");
+            oos.writeBytes("User " + userID + " signed in successfully.\r\n");
+            oos.writeBytes("\r\n");
             oos.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,35 +114,66 @@ public class ConnectionHandler implements Runnable {
                         // Send the list of datasets
                         oos.writeObject(datasets);
                         oos.flush();
-                        // Not necessity of reset, it'll only be used once
+                        // Just in case in the future the datasets change between requests
+                        oos.reset();
 
                         // Receive the request 
                         DatasetInsertRequest direquest = (DatasetInsertRequest) ois.readObject();
                         this.pool.execute(new DatasetInserterThread(direquest));
 
-                        oos.writeBytes("Inseting record in " + direquest.getDatasetName() + "...\n");
+                        oos.writeBytes("Inserting record in " + direquest.getDatasetName() + "...\r\n");
                         oos.flush();
                         break;
 
                     case "TRAIN_MODEL":
                         // Send the list of datasets
-                        oos.writeObject(this.datasets);
+                        oos.writeObject(datasets);
                         oos.flush();
+                        oos.reset();
 
                         TrainingRequest tr = (TrainingRequest) ois.readObject();
 
                         this.pool.execute(new ModelTrainerThread(tr, this.getUserID()));
 
-						oos.writeBytes("Training model over " + tr.getDatasetUsed() + "...\n");
-                        oos .flush();
+						oos.writeBytes("Training model over " + tr.getDatasetUsed() + "...\r\n");
+                        oos.flush();
 
                         break;
 
                     case "STUDENT_INFERENCE":
-                        // Hacerlo con Future
-                        break;
 
-					
+                        // Send the list of available models to the user
+                        List<String> availableModels = Server.getAvailableModels(this.getUserID());
+                        oos.writeObject(availableModels);
+                        oos.flush();
+                        oos.reset();
+
+                        InferenceRequest pr = (InferenceRequest) ois.readObject();
+                        Future<Float> futureSalary = this.pool.submit(new InferenceThread(pr, this.getUserID()));   
+                        
+                        try {
+                            Float predictedSalary = futureSalary.get(30, TimeUnit.SECONDS);
+                            oos.writeBytes("Predicted Salary: " + predictedSalary + "\r\n");
+                            oos.flush();    
+
+                        } catch (TimeoutException e) {
+                            futureSalary.cancel(true);
+                            oos.writeBytes("Inference timed out.\r\n");
+                            oos.flush();
+                        } catch(ExecutionException e) {
+                            System.out.println(e.getMessage());
+                            oos.writeBytes("Server error inferencing your salary.\r\n");
+                            oos.flush();
+
+                        } catch(InterruptedException e) {
+                            // Send interruption to the inference thread
+                            futureSalary.cancel(true);
+                            oos.writeBytes("Inference interrupted.\r\n");
+                            oos.flush();
+                        }
+
+
+                        break;
                 }
             }
 

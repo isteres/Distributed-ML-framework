@@ -4,6 +4,17 @@
 <!ELEMENT User (TrainedModels*)>
 <!ATTLIST User
     UserID ID #REQUIRED
-    SignInDate CDATA #IMPLIED>
+    SignInDate CDATA #REQUIRED>
 
-<!ELEMENT TrainedModels EMPTY>
+<!ELEMENT TrainedModels (Model*)>
+<!ELEMENT Model (Name, Algorithm, Dataset, Metrics)>
+<!ELEMENT Name (#PCDATA)>
+<!ATTLIST Name
+    TrainingDate CDATA #REQUIRED>
+
+<!ELEMENT Dataset (#PCDATA)>
+<!ELEMENT Algorithm (#PCDATA)>
+
+<!ELEMENT Metrics (R2Score, MeanAbsoluteError)>
+<!ELEMENT R2Score (#PCDATA)>
+<!ELEMENT MeanAbsoluteError (#PCDATA)>
