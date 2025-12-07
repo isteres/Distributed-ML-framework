@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset name="dataset2000">
-  
-  <record>
-    <Country_of_Origin>USA</Country_of_Origin>
-    <Education_Level>Master</Education_Level>
-    <Field_of_Study>Social_Sciences</Field_of_Study>
-    <Language_Proficiency>Fluent</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>34</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>53097</Salary>
-    <GPA_10>6.63</GPA_10>
-  </record>
   <record>
     <Country_of_Origin>China</Country_of_Origin>
     <Education_Level>Bachelor</Education_Level>
@@ -21999,6 +21988,17 @@
     <Age>23</Age>
     <Internship_Experience>Yes</Internship_Experience>
     <Salary>20000</Salary>
+    <GPA_10>7.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Fluent</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>19000</Salary>
     <GPA_10>7.0</GPA_10>
   </record>
 </dataset>

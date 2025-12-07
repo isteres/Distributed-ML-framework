@@ -7,9 +7,7 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 public class DatasetInserterThread implements Runnable{
@@ -48,7 +46,12 @@ public class DatasetInserterThread implements Runnable{
 
 				NodeList records = root.getElementsByTagName("record");
 				if(records.getLength() >0){
-					root.removeChild(records.item(0));
+					Node firstRecord =records.item(0); 
+					Node previousSibling = firstRecord.getPreviousSibling();
+                    if (previousSibling != null && previousSibling.getNodeType() == Node.TEXT_NODE) {
+                        root.removeChild(previousSibling); 
+                    }
+                    root.removeChild(firstRecord);
 				}
 
 				Element newRecord = datasetXML.createElement("record");
@@ -95,6 +98,7 @@ public class DatasetInserterThread implements Runnable{
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "dataset.dtd");
 				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 				DOMSource source = new DOMSource(datasetXML);
 				StreamResult result = new StreamResult(dataset);

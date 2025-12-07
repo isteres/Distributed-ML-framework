@@ -2,6 +2,15 @@ package Framework.Domain;
 
 import java.io.Serializable;
 
+
+/**
+ * Request object for making salary predictions on a student (still 
+ * WorkerWithsStudies, but with null salary).
+ * 
+ * Contains the student data and the model name to use for inference.
+ * 
+ * @author Isaac Terés Espallargas
+ */
 public class InferenceRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -9,10 +9,12 @@ public class Client {
 
     private final String SERVER_HOST = "localhost";
     private final int SERVER_PORT = 16666;
+    private static final int INACTIVITY_TIMEOUT = 60 * 1000;
 
     private Scanner sc;
     private String userID;
     private final ConsoleInterface console;
+    private InactivityWatcher inactivityWatcher;
 
     public Client(String userID) {
         this.sc = new Scanner(System.in);
@@ -30,34 +32,46 @@ public class Client {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream()); 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());) {
 
+            inactivityWatcher = new InactivityWatcher(INACTIVITY_TIMEOUT);
+            inactivityWatcher.start();
+
             boolean exit = false;
             signIn(oos,ois);  
 
-            while (!exit ) {
+            while (!exit && !inactivityWatcher.hasTimedOut()) {
                 console.printMenu();
                 String option = sc.nextLine().trim();
+                inactivityWatcher.resetTimer();
 
+                if (inactivityWatcher.hasTimedOut()) {
+                    System.out.println("[INFO] Sorry! Client closed due to inactivity.");
+                    break;
+                }
+
+                // Assumed that when the user selects an option, he is active 
                 switch (option) {
                     case "1":
                         WorkerWithStudies worker = console.fillStudentForm(true);
                         sendRecordToServer(oos, ois, worker);
+                        inactivityWatcher.resetTimer();
                         break;
 
                     case "2":
                         TrainingRequest tr = console.fillTrainingRequest();
                         sendTrainingRequestToServer(oos, ois, tr);
-
+                        inactivityWatcher.resetTimer();
                         break;
 
                     case "3":
-                        WorkerWithStudies studentWithNoSalary = console.fillStudentForm(false);
-                        InferenceRequest ir = new InferenceRequest(studentWithNoSalary, null);
+                        WorkerWithStudies studentWithoutSalary = console.fillStudentForm(false);
+                        InferenceRequest ir = new InferenceRequest(studentWithoutSalary, null);
                         sendInferenceRequestToServer(oos, ois, ir);
-
+                        inactivityWatcher.resetTimer();
                         break;
 
                     case "4":
                         downloadModelFromServer(oos, ois);
+                        inactivityWatcher.resetTimer();
                         break;
 
                     case "5":
@@ -70,12 +84,18 @@ public class Client {
                 }
             }
 
+            
+
         }catch(RuntimeException e){
             System.err.println("[ERROR] " + e.getMessage());
         } 
         catch (Exception e) {
             System.err.println("[ERROR] " + e.getMessage() + "(the server might be down).");
         } finally {
+
+            if(inactivityWatcher != null) {
+                inactivityWatcher.stopWatcher();
+            }   
             System.out.println("[INFO] Have a good one!");
         }
     }
@@ -86,7 +106,7 @@ public class Client {
             oos.writeBytes("SIGN_IN\r\n");
             oos.writeBytes(this.getUserID() + "\r\n");
             oos.flush();
-            System.out.println(ois.readLine());
+            System.out.println("[SERVER] " + ois.readLine());
             // Read the extra newline sent by server, would be null if the user tries to sign in from two devices
             if(ois.readLine() == null) {
                 throw new RuntimeException("User already signed in from another device.");

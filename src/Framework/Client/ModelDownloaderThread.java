@@ -5,6 +5,15 @@ import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.*;
 
+
+/**
+ * Downloads a machine learning model from the server in parallel chunks.
+ * 
+ * Creates a separate connection to the server, receives model data in chunks,
+ * and writes them concurrently to disk using {@link ChunkWriterThread}.
+ * 
+ * @author Isaac Terés Espallargas
+ */
 public class ModelDownloaderThread implements Runnable {
 
     private final String serverHost;
@@ -13,6 +22,15 @@ public class ModelDownloaderThread implements Runnable {
     private final String modelName;
     private final String destinationPath;
 
+    /**
+     * Constructs a ModelDownloaderThread with server connection details and download parameters.
+     * 
+     * @param serverHost the server hostname or IP address
+     * @param serverPort the server port number
+     * @param userID the user identifier for authentication
+     * @param modelName the name of the model to download
+     * @param destinationPath the local directory path where the model will be saved
+     */
     public ModelDownloaderThread(String serverHost, int serverPort, String userID, String modelName, String destinationPath) {
         this.serverHost = serverHost;
         this.serverPort = serverPort;
@@ -21,6 +39,12 @@ public class ModelDownloaderThread implements Runnable {
         this.destinationPath = destinationPath;
     }
 
+    /**
+     * Executes the model download process.
+     * 
+     * Creates a connection to the server, requests the model file, receives it in chunks,
+     * and writes each chunk to disk in parallel. Displays status messages to the user.
+     */
     public void run() {
         // Create another connection for downloading
         try (Socket downloadSocket = new Socket(serverHost, serverPort);

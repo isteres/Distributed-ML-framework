@@ -8,6 +8,19 @@ import Framework.Domain.Enums.StudentEnums.Gender;
 import Framework.Domain.Enums.StudentEnums.InternshipExperience;
 import java.io.Serializable;
 
+
+/**
+ * Represents a worker with academic and professional information.
+ * 
+ * Encapsulates student/worker data including education, personal characteristics,
+ * and professional experience that will be used for machine learning model training 
+ * and predictions purpose. The salary means the first salary that the worker received 
+ * after finishing his/her studies. 
+ * 
+ * In the case of predictions, the salary field can be null, as it is the target variable to predict.
+ * 
+ * @author Isaac Terés Espallargas
+ */
 public class WorkerWithStudies implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,11 +60,15 @@ public class WorkerWithStudies implements Serializable {
         this.salary = salary;
     }
     
+    /*
+    Previous to the programming of this framework, I did a Exploratory Data Analysis,
+    where I detected the distribution of the different features.  
+
+    To normalize the string, so we mantain the string format
+    in the dataset avoiding naming issues when training the models.  
+    */
     private String normalizeInput(String str) {
-        /*
-         To normalize the string, so we mantain the string format
-         in the dataset avoiding naming issues when training the models.  
-         */
+        
     	if (str == null || str.isEmpty()) return str;
         str = str.trim().toLowerCase();
         if(str.equals("phd")) {return "PhD";}

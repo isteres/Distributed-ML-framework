@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset name="dataset10000">  
-  <record>
-    <Country_of_Origin>Pakistan</Country_of_Origin>
-    <Education_Level>Bachelor</Education_Level>
-    <Field_of_Study>IT</Field_of_Study>
-    <Language_Proficiency>Intermediate</Language_Proficiency>
-    <Gender>Female</Gender>
-    <Age>26</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>40510</Salary>
-    <GPA_10>5.87</GPA_10>
-  </record>
   <record>
     <Country_of_Origin>Pakistan</Country_of_Origin>
     <Education_Level>Bachelor</Education_Level>
@@ -109999,5 +109989,16 @@
     <Internship_Experience>No</Internship_Experience>
     <Salary>52649</Salary>
     <GPA_10>6.71</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>Social_Sciences</Field_of_Study>
+    <Language_Proficiency>Fluent</Language_Proficiency>
+    <Gender>Female</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>23000</Salary>
+    <GPA_10>7.0</GPA_10>
   </record>
 </dataset>

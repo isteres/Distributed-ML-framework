@@ -1,7 +1,13 @@
 package Framework.Domain;
 import java.io.Serializable;
 
-// Class used to send the request of inserting a WorkerWithStudies in a certain dataset
+/**
+ * Request object for inserting a student/worker record into a dataset.
+ * 
+ * Contains the dataset name and the worker data to be inserted.
+ * 
+ * @author Isaac Terés Espallargas
+ */
 public class DatasetInsertRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;

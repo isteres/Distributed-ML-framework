@@ -1,82 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset name="dataset1000">
-  <record>
-    <Country_of_Origin>India</Country_of_Origin>
-    <Education_Level>PhD</Education_Level>
-    <Field_of_Study>IT</Field_of_Study>
-    <Language_Proficiency>Advanced</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>24</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>74646</Salary>
-    <GPA_10>7.07</GPA_10>
-  </record>
-  <record>
-    <Country_of_Origin>India</Country_of_Origin>
-    <Education_Level>Master</Education_Level>
-    <Field_of_Study>Business</Field_of_Study>
-    <Language_Proficiency>Intermediate</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>26</Age>
-    <Internship_Experience>No</Internship_Experience>
-    <Salary>60920</Salary>
-    <GPA_10>7.26</GPA_10>
-  </record>
-  <record>
-    <Country_of_Origin>Pakistan</Country_of_Origin>
-    <Education_Level>Bachelor</Education_Level>
-    <Field_of_Study>Engineering</Field_of_Study>
-    <Language_Proficiency>Advanced</Language_Proficiency>
-    <Gender>Female</Gender>
-    <Age>39</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>44549</Salary>
-    <GPA_10>6.14</GPA_10>
-  </record>
-  <record>
-    <Country_of_Origin>Brazil</Country_of_Origin>
-    <Education_Level>Master</Education_Level>
-    <Field_of_Study>Social_Sciences</Field_of_Study>
-    <Language_Proficiency>Fluent</Language_Proficiency>
-    <Gender>Female</Gender>
-    <Age>26</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>55174</Salary>
-    <GPA_10>6.26</GPA_10>
-  </record>
-  <record>
-    <Country_of_Origin>China</Country_of_Origin>
-    <Education_Level>Master</Education_Level>
-    <Field_of_Study>Social_Sciences</Field_of_Study>
-    <Language_Proficiency>Fluent</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>28</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>69797</Salary>
-    <GPA_10>6.5</GPA_10>
-  </record>
-  <record>
-    <Country_of_Origin>Pakistan</Country_of_Origin>
-    <Education_Level>Bachelor</Education_Level>
-    <Field_of_Study>IT</Field_of_Study>
-    <Language_Proficiency>Advanced</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>35</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>43202</Salary>
-    <GPA_10>7.6</GPA_10>
-  </record>
-  <record>
-    <Country_of_Origin>India</Country_of_Origin>
-    <Education_Level>Master</Education_Level>
-    <Field_of_Study>Arts</Field_of_Study>
-    <Language_Proficiency>Fluent</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>33</Age>
-    <Internship_Experience>No</Internship_Experience>
-    <Salary>64599</Salary>
-    <GPA_10>5.41</GPA_10>
-  </record>
   <record>
     <Country_of_Origin>China</Country_of_Origin>
     <Education_Level>Master</Education_Level>
@@ -10999,5 +10923,82 @@
     <Internship_Experience>Yes</Internship_Experience>
     <Salary>88361</Salary>
     <GPA_10>5.16</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Fluent</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>23000</Salary>
+    <GPA_10>7.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Master</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Advanced</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>25</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>27000</Salary>
+    <GPA_10>7.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>PhD</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Advanced</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>29000</Salary>
+    <GPA_10>6.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>Arts</Field_of_Study>
+    <Language_Proficiency>Basic</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>21000</Salary>
+    <GPA_10>6.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Fluent</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>170000</Salary>
+    <GPA_10>7.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>USA</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Fluent</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>23000</Salary>
+    <GPA_10>7.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Basic</Language_Proficiency>
+    <Gender>Other</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>19000</Salary>
+    <GPA_10>6.0</GPA_10>
   </record>
 </dataset>

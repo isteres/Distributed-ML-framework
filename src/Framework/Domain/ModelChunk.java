@@ -2,6 +2,15 @@ package Framework.Domain;
 
 import java.io.Serializable;
 
+
+/**
+ * Represents a chunk of a machine learning model file for streaming transmission.
+ * 
+ * Used by {@link Framework.Server.ModelSenderThread} and {@link Framework.Client.ModelDownloaderThread}
+ * to transfer large model files in smaller, manageable pieces over the network.
+ * 
+ * @author Isaac Terés Espallargas
+ */
 public class ModelChunk implements Serializable {
     private static final long serialVersionUID = 1L;
     

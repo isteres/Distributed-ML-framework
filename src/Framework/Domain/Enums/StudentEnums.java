@@ -1,5 +1,16 @@
 package Framework.Domain.Enums;
 
+
+/**
+ * Enumeration classes representing student and worker attributes.
+ * 
+ * Contains all possible values for personal, educational, and professional characteristics
+ * used throughout the distributed ML framework for model training and inference.
+ * 
+ * The main goal of this class was to reduce the incossistencies when dealing with categorical data.
+ * 
+ * @author Isaac Terés Espallargas
+ */
 public class StudentEnums {
 
     public enum Country {

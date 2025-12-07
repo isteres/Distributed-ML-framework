@@ -1,6 +1,7 @@
 package Framework.Persistence;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
@@ -9,6 +10,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 public class ServerDatabase {
 
@@ -46,10 +48,10 @@ public class ServerDatabase {
         }
     }
 
-    public synchronized void registerUser(String userIdentification) {
+    public synchronized boolean registerUser(String userIdentification) {
         if (userIdentification == null || userIdentification.trim().isEmpty()) {
             LOGGER.severe("[DATABASE] Username cannot be null or empty");
-            return;
+            return false;
         }
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -58,6 +60,7 @@ public class ServerDatabase {
 
             if (userExists(doc, userIdentification)) {
                 LOGGER.info("[DATABASE] User already exists: " + userIdentification);
+                return true;
             } else {
                 Element root = doc.getDocumentElement();
                 Element models = doc.createElement("TrainedModels");
@@ -68,11 +71,11 @@ public class ServerDatabase {
                 root.appendChild(user);
                 saveDocument(doc);
                 LOGGER.info("[DATABASE] User registered: " + userIdentification);
-
             }
-        } catch (Exception e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             LOGGER.severe("[DATABASE] Failed to register user: " + e.getMessage());
         }
+        return false;
     }
 
     public synchronized void registerTrainedModel(String userID, String modelName, String algorithm, 

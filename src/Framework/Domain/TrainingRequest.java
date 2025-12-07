@@ -1,6 +1,14 @@
 package Framework.Domain;
 import java.io.*;
 import java.util.Map;
+
+/**
+ * Request object for training a machine learning model.
+ * 
+ * Contains the model name, hyperparameters, and the dataset to use for training.
+ * 
+ * @author Isaac Terés Espallargas
+ */
 public class TrainingRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -51,12 +51,16 @@ public class ConnectionHandler implements Runnable {
             return;
         }
 
-        setUserID(userID);
+        this.setUserID(userID);
         connectedUsers.add(userID);
-        serverDatabase.registerUser(userID);
+        boolean alreadyExists = serverDatabase.registerUser(userID);
 
         try {
-            oos.writeBytes("User " + userID + " signed in successfully.\r\n");
+            if (alreadyExists) {
+                oos.writeBytes("Welcome back " + userID + "!\r\n");
+            } else {
+                oos.writeBytes("User " + userID + " registered successfully. Welcome!\r\n");
+            }
             oos.writeBytes("\r\n");
             oos.flush();
         } catch (IOException e) {
