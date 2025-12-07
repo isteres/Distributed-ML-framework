@@ -8,6 +8,12 @@ import java.util.Scanner;
 public class ConsoleInterface {
 
     private final Scanner sc;
+    final String DEFAULT_TEST_SIZE = "0.2";
+    final String DEFAULT_N_EST = "700";
+    final String DEFAULT_MAX_DEPTH = "None";
+    final String DEFAULT_HIDDEN = "100,50";
+    final String DEFAULT_ACTIVATION = "relu";
+    final String DEFAULT_MAX_ITER = "400";
 
     public ConsoleInterface(Scanner sc) {
         this.sc = sc;
@@ -18,7 +24,8 @@ public class ConsoleInterface {
         System.out.println("1) Fill a form with your first salary and help us to improve our datasets.");
         System.out.println("2) Train machine learning model over chosen dataset and hyperparameters.");
         System.out.println("3) Predict your first salary with a trained model.");
-        System.out.println("4) Disconnect.");
+        System.out.println("4) Download a trained model from the server.");
+        System.out.println("5) Exit.");
         System.out.print("Select an option: ");
     }
 
@@ -28,8 +35,10 @@ public class ConsoleInterface {
 
         while (!validInput) {
             try {
-                System.out.println("\r\n--- Please fill the next form with your data ---\r\n");
-
+                System.out.println("\r\n---------------- Please fill the next form with your data ----------------\r\n");
+                if(!withSalary) {
+                    System.out.println("\r\nOne of our models will predict your first salary based on the provided information.\r\n");
+                }
                 System.out.print("Insert your country (Brazil, China, Spain, Pakistan, USA, India, Vietnam, Nigeria): ");
                 String country = sc.nextLine().trim();
 
@@ -56,7 +65,7 @@ public class ConsoleInterface {
 
                 Integer salary = null;
                 if (withSalary) {
-                    System.out.print("Salary: ");
+                    System.out.print("Salary($/year): ");
                     salary = readInt();
                 }
 
@@ -74,12 +83,7 @@ public class ConsoleInterface {
 
     public TrainingRequest fillTrainingRequest() {
         System.out.println("\r\n--- Training Request Form ---");
-        final String DEFAULT_TEST_SIZE = "0.2";
-        final String DEFAULT_N_EST = "700";
-        final String DEFAULT_MAX_DEPTH = "None";
-        final String DEFAULT_HIDDEN = "100,50";
-        final String DEFAULT_ACTIVATION = "relu";
-        final String DEFAULT_MAX_ITER = "400";
+        
 
         System.out.println("Select the machine learning algorithm:");
         System.out.println("1) Random Forest Regressor");

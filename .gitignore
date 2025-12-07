@@ -13,8 +13,10 @@ out/
 *.class
 
 # Trained models and runtime database
+DownloadedModels/
 TrainedModels/
 database.xml
+
 
 # Python part
 __pycache__/

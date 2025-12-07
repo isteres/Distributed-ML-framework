@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset name="dataset1000">
   <record>
     <Country_of_Origin>India</Country_of_Origin>
@@ -11011,5 +11010,27 @@
     <Internship_Experience>No</Internship_Experience>
     <Salary>166666</Salary>
     <GPA_10>9.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>USA</Country_of_Origin>
+    <Education_Level>PhD</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Basic</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>34000</Salary>
+    <GPA_10>7.0</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Advanced</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>23000</Salary>
+    <GPA_10>7.0</GPA_10>
   </record>
 </dataset>

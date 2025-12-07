@@ -9,6 +9,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class DatasetInserterThread implements Runnable{
@@ -44,6 +45,12 @@ public class DatasetInserterThread implements Runnable{
 				Document datasetXML = db.parse(dataset);
 				
 				Element root = datasetXML.getDocumentElement();
+
+				NodeList records = root.getElementsByTagName("record");
+				if(records.getLength() >0){
+					root.removeChild(records.item(0));
+				}
+
 				Element newRecord = datasetXML.createElement("record");
 				
 				Element country = datasetXML.createElement("Country_of_Origin");
@@ -94,22 +101,12 @@ public class DatasetInserterThread implements Runnable{
 				transformer.transform(source, result);
 				
 				
-			}catch(ParserConfigurationException e) {
-				e.printStackTrace();
-			}catch(IOException e) {
-				e.printStackTrace();
-			}catch(SAXException e) {
-				e.printStackTrace();
-			}catch(TransformerConfigurationException e) {
-				e.printStackTrace();
-			}catch(TransformerException e) {
+			}catch(ParserConfigurationException | IOException | SAXException |  TransformerException e) {
 				e.printStackTrace();
 			}
 		}
-
 	}
-	
-	
+}
 	
 
-}
+

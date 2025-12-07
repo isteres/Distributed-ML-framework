@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public class DailyTrainingTask extends TimerTask {
+
+    private static final Logger LOGGER = Logger.getLogger(DailyTrainingTask.class.getName());
 
     private String dataset;
 
@@ -17,7 +20,7 @@ public class DailyTrainingTask extends TimerTask {
     @Override
     public void run() {
         
-        System.out.println("[DAILY TRAINING] Starting automatic daily model training...");
+        LOGGER.info("[SERVER] Starting automatic daily model training...");
 
         ExecutorService pool = Executors.newFixedThreadPool(4);
         CyclicBarrier syncStart = new CyclicBarrier(5);
@@ -39,15 +42,15 @@ public class DailyTrainingTask extends TimerTask {
             pool.execute(new ModelTrainerThread(nn, "SERVER", syncStart, doneSignal));
 
             syncStart.await();
-            System.out.println("[DAILY TRAINING] Scheduled 4 training tasks.");
+            LOGGER.info("[SERVER] Scheduled 4 training tasks.");
             doneSignal.await();
-            System.out.println("[DAILY TRAINING] All 4 training tasks completed.");
+            LOGGER.info("[SERVER] All 4 training tasks completed.");
 
         } catch (InterruptedException e) {
-            System.err.println("[DAILY TRAINING] Training tasks interrupted.");
+            LOGGER.severe("[SERVER] Training tasks interrupted.");
             Thread.currentThread().interrupt();
         } catch(BrokenBarrierException e) {
-            System.err.println("[DAILY TRAINING] Barrier broken.");
+            LOGGER.severe("[SERVER] Barrier broken.");
         } finally {
             pool.shutdown();
 

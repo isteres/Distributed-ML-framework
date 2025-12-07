@@ -17,11 +17,11 @@ public class Main {
 
     private static void printBanner() {
 
-        System.out.println("====================================================================\r\n");
-        System.out.println("  Welcome to the Console Interface of the Distributed ML Framework  \r\n");
-        System.out.println("        Contribute data | Train ML models | Inference results       \r\n");
-        System.out.println("      Salary prediction over graduated, master and PhD students     \r\n");
-        System.out.println("====================================================================\r\n");
+        System.out.println("=========================================================================\r\n");
+        System.out.println("      Welcome to the Console Interface of the Distributed ML Framework   \r\n");
+        System.out.println("  Contribute data | Train ML models | Inference results | Download models\r\n");
+        System.out.println("         Salary prediction over graduated, master and PhD students       \r\n");
+        System.out.println("=========================================================================\r\n");
 
     }
 

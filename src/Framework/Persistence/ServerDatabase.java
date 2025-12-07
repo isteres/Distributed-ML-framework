@@ -3,6 +3,7 @@ package Framework.Persistence;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Logger;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -10,6 +11,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 
 public class ServerDatabase {
+
+    private static final Logger LOGGER = Logger.getLogger(ServerDatabase.class.getName());
 
     private static final String FILE_PATH = "src/Framework/Persistence/database.xml";
     private static final ServerDatabase instance = new ServerDatabase(FILE_PATH);
@@ -36,17 +39,16 @@ public class ServerDatabase {
 
                 saveDocument(doc);
 
-                System.out.println("[DATABASE] File created: " + XMLfile.getAbsolutePath());
+                LOGGER.info("[DATABASE] File created: " + XMLfile.getAbsolutePath());
             } catch (Exception e) {
-                System.err.println("[ERROR] Failed to initialize database: " + e.getMessage());
-                e.printStackTrace();
+                LOGGER.severe("[DATABASE] Failed to initialize database: " + e.getMessage());
             }
         }
     }
 
     public synchronized void registerUser(String userIdentification) {
         if (userIdentification == null || userIdentification.trim().isEmpty()) {
-            System.err.println("[ERROR] Username cannot be null or empty");
+            LOGGER.severe("[DATABASE] Username cannot be null or empty");
             return;
         }
         try {
@@ -55,7 +57,7 @@ public class ServerDatabase {
             Document doc = db.parse(XMLfile);
 
             if (userExists(doc, userIdentification)) {
-                System.out.println("[DATABASE] User already exists: " + userIdentification);
+                LOGGER.info("[DATABASE] User already exists: " + userIdentification);
             } else {
                 Element root = doc.getDocumentElement();
                 Element models = doc.createElement("TrainedModels");
@@ -65,12 +67,11 @@ public class ServerDatabase {
                 user.appendChild(models);
                 root.appendChild(user);
                 saveDocument(doc);
-                System.out.println("[DATABASE] User registered: " + userIdentification);
+                LOGGER.info("[DATABASE] User registered: " + userIdentification);
 
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] Failed to register user: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.severe("[DATABASE] Failed to register user: " + e.getMessage());
         }
     }
 
@@ -83,7 +84,7 @@ public class ServerDatabase {
 
             Element userElement = findUserElement(doc, userID);
             if (userElement == null) {
-                System.err.println("[ERROR] User not found: " + userID);
+                LOGGER.severe("[DATABASE] User not found: " + userID);
                 return;
             }
 
@@ -130,11 +131,10 @@ public class ServerDatabase {
             trainedModelsElement.appendChild(modelElement);
 
             saveDocument(doc);
-            System.out.println("[DATABASE] Model registered: " + modelName + " for user " + userID);
+            LOGGER.info("[DATABASE] Model registered: " + modelName + " for user " + userID);
 
         } catch (Exception e) {
-            System.err.println("[ERROR] Failed to register model: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.severe("[DATABASE] Failed to register model: " + e.getMessage());
         }
     }
 
@@ -174,8 +174,7 @@ public class ServerDatabase {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new DOMSource(doc), new StreamResult(XMLfile));
         } catch (TransformerException e) {
-            System.err.println("[ERROR] Failed to save document: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.severe("[DATABASE] Failed to save document: " + e.getMessage());
         }
     }
 }

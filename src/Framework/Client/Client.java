@@ -57,6 +57,10 @@ public class Client {
                         break;
 
                     case "4":
+                        downloadModelFromServer(oos, ois);
+                        break;
+
+                    case "5":
                         System.out.println("[INFO] Closing client...");
                         exit = true;
                         break;
@@ -88,70 +92,6 @@ public class Client {
                 throw new RuntimeException("User already signed in from another device.");
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void sendInferenceRequestToServer(ObjectOutputStream oos, ObjectInputStream ois, InferenceRequest ir) {
-        try {
-            // Send the command following the protocol
-            oos.writeBytes("STUDENT_INFERENCE\r\n");
-            oos.flush();
-
-            // Select model
-            List<String> availableModels = (List<String>) ois.readObject();
-            System.out.println("\nAvailable models for inference:");
-            boolean serverHeaderPrinted = false;
-            boolean userHeaderPrinted = false;
-
-            for (int i = 0; i < availableModels.size(); i++) {
-                String model = availableModels.get(i);
-                if (model.startsWith("Server_")) {
-                    if (!serverHeaderPrinted) {
-                        System.out.println("Server Models:");
-                        serverHeaderPrinted = true;
-                    }
-                } else {
-                    if (!userHeaderPrinted) {
-                        System.out.println("Your Models:");
-                        userHeaderPrinted = true;
-                    }
-                }
-                System.out.println("  " + (i + 1) + ". " + model);
-            }
-
-            String selectedModel;
-            while (true) {
-                System.out.print("\r\nSelect a model by number: ");
-                String input = sc.nextLine().trim();
-                try {
-                    int choice = Integer.parseInt(input);
-                    if (choice > 0 && choice <= availableModels.size()) {
-                        selectedModel = availableModels.get(choice - 1);
-                        break;
-                    } else {
-                        System.out.println("Invalid selection. Try again.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
-                }
-            }
-            ir.setModelName(selectedModel);
-
-            oos.writeObject(ir);
-            oos.flush();
-
-            // Read server response
-            String response = ois.readLine();
-            System.out.println("[SERVER] " + response + "$/year \r\n");
-            
-            try {
-                Thread.currentThread().sleep(1000*3);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -199,7 +139,7 @@ public class Client {
         }
 
     }
-    
+
     private void sendTrainingRequestToServer(ObjectOutputStream oos, ObjectInputStream ois, TrainingRequest tr) {
         try {
             oos.writeBytes("TRAIN_MODEL\r\n");
@@ -209,6 +149,7 @@ public class Client {
             System.out.println("Take into account that the dataset name means approximately the amount of records it contains.");
             System.out.println("(Datasets available)");
             List<String> datasets = (List<String>) ois.readObject();
+            
             for (String dataset : datasets) {
                 System.out.println(dataset);
             }
@@ -237,6 +178,101 @@ public class Client {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private String selectModelFromList(List<String> models, String prompt) {
+        System.out.println("\nAvailable models:");
+        
+        // Print server models first
+        boolean serverHeaderPrinted = false;
+        boolean userHeaderPrinted = false;
+        
+        for (int i = 0; i < models.size(); i++) {
+            String model = models.get(i);
+            if (model.startsWith("Server_")) {
+                if (!serverHeaderPrinted) {
+                    System.out.println("  [SERVER MODELS]");
+                    serverHeaderPrinted = true;
+                }
+            } else {
+                if (!userHeaderPrinted) {
+                    System.out.println("  [YOUR MODELS]");
+                    userHeaderPrinted = true;
+                }
+            }
+            System.out.println("    " + (i + 1) + ". " + model);
+        }
+
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int choice = Integer.parseInt(sc.nextLine().trim());
+                if (choice > 0 && choice <= models.size()) {
+                    return models.get(choice - 1);
+                }
+                System.out.println("Invalid selection.");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+    }
+
+    private void sendInferenceRequestToServer(ObjectOutputStream oos, ObjectInputStream ois, InferenceRequest ir) {
+        try {
+            oos.writeBytes("STUDENT_INFERENCE\r\n");
+            oos.flush();
+
+            List<String> availableModels = (List<String>) ois.readObject();
+            
+            if (availableModels.isEmpty()) {
+                System.out.println("[INFO] No models available for inference.");
+                return;
+            }
+
+            String selectedModel = selectModelFromList(availableModels, "Select model for inference: ");
+            ir.setModelName(selectedModel);
+
+            oos.writeObject(ir);
+            oos.flush();
+
+            String response = ois.readLine();
+            System.out.println("[SERVER] " + response + "$/year\r\n");
+            
+            try {
+                Thread.sleep(1000 * 3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void downloadModelFromServer(ObjectOutputStream oos, ObjectInputStream ois) {
+        try {
+            oos.writeBytes("LIST_MODELS\r\n");
+            oos.flush();
+
+            List<String> models = (List<String>) ois.readObject();
+            
+            if (models.isEmpty()) {
+                System.out.println("[INFO] No models available.");
+                return;
+            }
+
+            String selected = selectModelFromList(models, "Select model to download: ");
+
+            Thread downloadThread = new Thread(
+                new ModelDownloaderThread(SERVER_HOST, SERVER_PORT, userID, selected, "DownloadedModels")
+            );
+            downloadThread.start();
+            
+            System.out.println("[INFO] Download started in background.");
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("[ERROR] " + e.getMessage());
         }
     }
 }

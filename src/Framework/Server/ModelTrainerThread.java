@@ -5,8 +5,11 @@ import Framework.Persistence.ServerDatabase;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public class ModelTrainerThread implements Runnable {
+
+    private static final Logger LOGGER = Logger.getLogger(ModelTrainerThread.class.getName());
 
     private TrainingRequest trainingRequest;
     private String userID;
@@ -30,11 +33,9 @@ public class ModelTrainerThread implements Runnable {
     public void run() {
         try {
 
-
             // Synchronize the start if we want to paralelize the training
             if (startBarrier != null) {
                 startBarrier.await();
-                System.out.println("[TRAINING] Starting training for: " + trainingRequest.getModelName());
             }
 
             String script = ".\\src\\python_scripts\\main.py";
@@ -50,7 +51,7 @@ public class ModelTrainerThread implements Runnable {
                 userDir.mkdirs();
             }
             if (!userDir.exists()) {
-                System.err.println("[TRAINING] ERROR creating directory: " + userDir.getAbsolutePath());
+                LOGGER.severe("[" + userID + "] ERROR creating directory: " + userDir.getAbsolutePath());
             }
             String outputPath = new File(userDir, this.trainingRequest.getModelName() + "_model.pkl").getAbsolutePath();
 
@@ -67,7 +68,7 @@ public class ModelTrainerThread implements Runnable {
             }
 
             pb.redirectErrorStream(true);
-            System.out.println("[TRAINING] Command: " + String.join(" ", pb.command()));
+            LOGGER.info("[" + userID + "] Command: " + String.join(" ", pb.command()));
 
             Process process = pb.start();
 
@@ -78,7 +79,6 @@ public class ModelTrainerThread implements Runnable {
             try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    System.out.println("[PYTHON] " + line);
                     
                     if (line.contains("R2")) {
                         String [] split = line.split("=");
@@ -96,10 +96,10 @@ public class ModelTrainerThread implements Runnable {
             }
 
             int exitCode = process.waitFor();
-            System.out.println("Python exited with code: " + exitCode);
+            LOGGER.info("[" + userID + "] Python exited with code: " + exitCode);
 
             if (exitCode == 0) {
-                System.out.println("[TRAINING] Training completed for: " + trainingRequest.getModelName());
+                LOGGER.info("[" + userID + "] Training completed for: " + trainingRequest.getModelName());
                 
                 if(!userID.equals("SERVER")){
                     String algorithm = hyperparamMap.get("algorithm");
@@ -108,17 +108,17 @@ public class ModelTrainerThread implements Runnable {
                     );
                 }
 
-            }else {
-                System.err.println("[TRAINING] Training failed for: " + trainingRequest.getModelName());
+            } else {
+                LOGGER.severe("[" + userID + "] Training failed for: " + trainingRequest.getModelName());
             }
 
 
         } catch (InterruptedException | BrokenBarrierException e) {
-            System.err.println("[TRAINING] Synchronization failed: " + e.getMessage());
+            LOGGER.severe("[" + userID + "] Synchronization failed: " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[" + userID + "] IO error during training: " + e.getMessage());
         } finally {
-            // Count downthe latch to synchronize the end if needed
+            // Count down the latch to synchronize the end if needed
             if (finishLatch != null) {
                 finishLatch.countDown();
             }

@@ -3,9 +3,12 @@ package Framework.Server;
 import Framework.Domain.*;
 import java.io.*;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 
 public class InferenceThread implements Callable<Float> {
+
+    private static final Logger LOGGER = Logger.getLogger(InferenceThread.class.getName());
 
     private InferenceRequest predictionRequest;
     private String userID;
@@ -34,6 +37,7 @@ public class InferenceThread implements Callable<Float> {
         File modelFile = new File(userDir, this.predictionRequest.getModelName() + "_model.pkl");
 
         if (!modelFile.exists()) {
+            LOGGER.severe("[" + userID + "] Model not found: " + modelFile.getAbsolutePath());
             throw new FileNotFoundException("Model not found: " + modelFile.getAbsolutePath());
         }
 
@@ -68,9 +72,9 @@ public class InferenceThread implements Callable<Float> {
         pb.command().add(String.valueOf(student.getAge()));
 
         pb.redirectErrorStream(true);
-        System.out.println("[PREDICTION] Command: " + String.join(" ", pb.command()));
+        LOGGER.info("[" + userID + "] Starting inference with model: " + modelName);
 
-        Process process = pb.start();
+        Process process = null;
         Float prediction = null;
         
         try {
@@ -85,7 +89,6 @@ public class InferenceThread implements Callable<Float> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Check for interruption on each iteration (timeout handling)
                     if (Thread.currentThread().isInterrupted()) {
                         throw new InterruptedException("Prediction was cancelled due to timeout");
                     }
@@ -105,15 +108,18 @@ public class InferenceThread implements Callable<Float> {
 
             // Validate prediction result
             if (exitCode != 0 || prediction == null) {
+                LOGGER.severe("[" + userID + "] Prediction failed with exit code: " + exitCode);
                 throw new RuntimeException("Prediction failed with exit code: " + exitCode);
             }
 
+            LOGGER.info("[" + userID + "] Inference completed. Result: " + prediction);
             return prediction;
 
         } catch (InterruptedException e) {
             if (process != null && process.isAlive()) {
                 process.destroy();
             }
+            LOGGER.warning("[" + userID + "] Inference interrupted.");
             // Propagate to let ConnectionHandler handle it
             throw e;
             
@@ -122,6 +128,7 @@ public class InferenceThread implements Callable<Float> {
             if (process != null && process.isAlive()) {
                 process.destroy();
             }
+            LOGGER.severe("[" + userID + "] IO error during inference: " + e.getMessage());
             throw new IOException("Error executing prediction script: " + e.getMessage(), e);
             
         } 

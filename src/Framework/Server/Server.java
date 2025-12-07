@@ -5,10 +5,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 // In this class we find the Server that will be waiting connections. It will
 // distribute every connection in a different thread in order to improve the efficiency
 public class Server {
+
+    private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     public static final int SERVER_PORT = 16666;
     // The first version of the framework will have fixed datasets
@@ -20,30 +23,35 @@ public class Server {
 
     public static void main(String[] args) {
         
+        // Set locale to English for logging
+        Locale.setDefault(Locale.ENGLISH);
+        
         ExecutorService pool = Executors.newCachedThreadPool();
         Timer dailyTimer = new Timer();
 
         try (ServerSocket server = new ServerSocket(16666)) {
-            System.out.println("Server listening in the port " + SERVER_PORT);
+            LOGGER.info("[SERVER] Listening on port " + SERVER_PORT);
 
-            dailyTimer.scheduleAtFixedRate(new DailyTrainingTask("dataset1000.xml"), 0, 24 * 60 * 60 * 1000);
+            dailyTimer.scheduleAtFixedRate(new DailyTrainingTask("dataset10000.xml"), 0, 124 * 60 * 60 * 1000);
+            LOGGER.info("[SERVER] Daily training task scheduled.");
             
             while (true) {
                 try {
                     Socket client = server.accept();
+                    LOGGER.info("[SERVER] New connection from " + client.getInetAddress() + ":" + client.getPort());
 
                     pool.execute(new ConnectionHandler(client, pool, datasets, serverDatabase, connectedUsers));
 
                 } catch (IOException excpClient) {
-                    excpClient.printStackTrace();
+                    LOGGER.severe("[SERVER] Client connection error: " + excpClient.getMessage());
                 }
 
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("[SERVER] Error: " + e.getMessage());
         } finally {
-        	dailyTimer.cancel();
+            dailyTimer.cancel();
             pool.shutdown();
         }
 
@@ -84,6 +92,13 @@ public class Server {
         return models;
     }
 
+    public static String getModelPath(String modelName, String userID) {
+        if (modelName.startsWith("Server_")) {
+            return "TrainedModels/SERVER/" + modelName + "_model.pkl";
+        }
+        return "TrainedModels/" + userID + "/" + modelName + "_model.pkl";
+    }
+
 
     private static List<String> getDatasetFiles() {
         // Returns a list with all the files located in the directory "Datasets"
@@ -91,14 +106,14 @@ public class Server {
         List<String> list = new ArrayList<>();
 
         if (!dir.exists() || !dir.isDirectory()) {
-            System.err.println("[SERVER] Datasets directory not found!");
+            LOGGER.severe("[SERVER] Datasets directory not found!");
             return list;
         }
 
         File[] files = dir.listFiles();
         if (files != null) {
             for (File f : files) {
-                if (f.isFile()&& !f.getName().endsWith(".dtd")) {
+                if (f.isFile() && !f.getName().endsWith(".dtd")) {
                     list.add(f.getName());
                 }
             }
