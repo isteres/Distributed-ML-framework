@@ -23,7 +23,6 @@ public class Server {
 
     public static void main(String[] args) {
         
-        // Set locale to English for logging
         Locale.setDefault(Locale.ENGLISH);
         
         ExecutorService pool = Executors.newCachedThreadPool();
@@ -94,9 +93,9 @@ public class Server {
 
     public static String getModelPath(String modelName, String userID) {
         if (modelName.startsWith("Server_")) {
-            return "TrainedModels/SERVER/" + modelName + "_model.pkl";
+            return "TrainedModels\\SERVER\\" + modelName + "_model.pkl";
         }
-        return "TrainedModels/" + userID + "/" + modelName + "_model.pkl";
+        return "TrainedModels\\" + userID + "\\" + modelName + "_model.pkl";
     }
 
 

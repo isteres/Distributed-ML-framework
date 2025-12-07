@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset name="dataset2000">
-  <record>
-    <Country_of_Origin>Nigeria</Country_of_Origin>
-    <Education_Level>Master</Education_Level>
-    <Field_of_Study>Business</Field_of_Study>
-    <Language_Proficiency>Fluent</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>28</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>63017</Salary>
-    <GPA_10>6.26</GPA_10>
-  </record>
+  
   <record>
     <Country_of_Origin>USA</Country_of_Origin>
     <Education_Level>Master</Education_Level>
@@ -22000,5 +21989,16 @@
     <Internship_Experience>No</Internship_Experience>
     <Salary>36832</Salary>
     <GPA_10>6.2</GPA_10>
+  </record>
+<record>
+    <Country_of_Origin>Spain</Country_of_Origin>
+    <Education_Level>Bachelor</Education_Level>
+    <Field_of_Study>IT</Field_of_Study>
+    <Language_Proficiency>Basic</Language_Proficiency>
+    <Gender>Male</Gender>
+    <Age>23</Age>
+    <Internship_Experience>Yes</Internship_Experience>
+    <Salary>20000</Salary>
+    <GPA_10>7.0</GPA_10>
   </record>
 </dataset>

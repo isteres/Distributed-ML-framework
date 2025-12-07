@@ -39,7 +39,7 @@ public class DatasetInserterThread implements Runnable{
 
 		synchronized(lock) {
 			try {
-				File dataset = new File("Datasets/" +this.inRequest.getDatasetName());
+				File dataset = new File("Datasets\\" +this.inRequest.getDatasetName());
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				Document datasetXML = db.parse(dataset);

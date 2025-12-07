@@ -103,7 +103,7 @@ public class Client {
             oos.writeBytes("INSERT_DATASET\r\n");
             oos.flush();
             System.out.println("\r\nIn which dataset do you want to insert your record?");
-            System.out.println("Take into account that the dataset name means approximately the amount of records it contains.");
+            System.out.println("Take into account that the dataset name means the amount of records it contains.");
             System.out.println("(Datasets available)");
 
             // Check datasets available
@@ -146,7 +146,7 @@ public class Client {
             oos.flush();
 
             System.out.println("\r\nOver which dataset do you want to train the model?");
-            System.out.println("Take into account that the dataset name means approximately the amount of records it contains.");
+            System.out.println("Take into account that the dataset name means the amount of records it contains.");
             System.out.println("(Datasets available)");
             List<String> datasets = (List<String>) ois.readObject();
             

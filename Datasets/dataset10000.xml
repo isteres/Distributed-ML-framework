@@ -110000,15 +110000,4 @@
     <Salary>52649</Salary>
     <GPA_10>6.71</GPA_10>
   </record>
-<record>
-    <Country_of_Origin>USA</Country_of_Origin>
-    <Education_Level>Bachelor</Education_Level>
-    <Field_of_Study>IT</Field_of_Study>
-    <Language_Proficiency>Basic</Language_Proficiency>
-    <Gender>Male</Gender>
-    <Age>23</Age>
-    <Internship_Experience>Yes</Internship_Experience>
-    <Salary>28000</Salary>
-    <GPA_10>7.0</GPA_10>
-  </record>
 </dataset>

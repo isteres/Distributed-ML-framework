@@ -14,7 +14,7 @@ public class ServerDatabase {
 
     private static final Logger LOGGER = Logger.getLogger(ServerDatabase.class.getName());
 
-    private static final String FILE_PATH = "src/Framework/Persistence/database.xml";
+    private static final String FILE_PATH = "src\\Framework\\Persistence\\database.xml";
     private static final ServerDatabase instance = new ServerDatabase(FILE_PATH);
     private final File XMLfile;
 
