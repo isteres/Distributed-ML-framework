@@ -16,6 +16,10 @@ out/
 DownloadedModels/
 TrainedModels/
 database.xml
+Client.jar
+Client.bat
+Server.jar
+Server.bat
 
 
 # Python part

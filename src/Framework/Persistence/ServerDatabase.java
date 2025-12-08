@@ -225,6 +225,11 @@ public class ServerDatabase {
      */
     private void saveDocument(Document doc) {
         try {
+            Node root = doc.getDocumentElement();
+            if (root != null) {
+                removeEmptyTextNodes(root);
+            }
+
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
 
@@ -234,6 +239,27 @@ public class ServerDatabase {
             transformer.transform(new DOMSource(doc), new StreamResult(XMLfile));
         } catch (TransformerException e) {
             LOGGER.severe("[DATABASE] Failed to save document: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Recursively removes text nodes that contain only whitespace from the DOM.
+     * This prevents transformer pretty-printing from producing extra blank lines.
+     * Helps to mantain a solid XML structure.
+     * 
+     * @param node node to clean
+     */
+    private void removeEmptyTextNodes(Node node) {
+        NodeList children = node.getChildNodes();
+        for (int i = children.getLength() - 1; i >= 0; i--) {
+            Node child = children.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE) {
+                if (child.getTextContent().trim().isEmpty()) {
+                    node.removeChild(child);
+                }
+            } else if (child.getNodeType() == Node.ELEMENT_NODE) {
+                removeEmptyTextNodes(child);
+            }
         }
     }
 }
