@@ -6,6 +6,15 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 
+/**
+ * Performs a model inference by invoking the project's Python prediction script.
+ *
+ * This Callable prepares the command-line invocation for the Python script,
+ * passes the selected model path and student features as arguments, executes
+ * the process, parses the prediction output and returns the predicted value.
+ * The thread responds to interruptions by terminating the external process
+ * and propagating the interrupt so callers can handle cancellation/timeouts.
+ */
 public class InferenceThread implements Callable<Float> {
 
     private static final Logger LOGGER = Logger.getLogger(InferenceThread.class.getName());
@@ -13,11 +22,30 @@ public class InferenceThread implements Callable<Float> {
     private InferenceRequest predictionRequest;
     private String userID;
 
+    /**
+     * Constructs an InferenceThread for the provided prediction request.
+     *
+     * @param pr the InferenceRequest containing student data and model selection
+     * @param userID the id of the requesting user (used to resolve model ownership)
+     */
     public InferenceThread(InferenceRequest pr, String userID) {
         this.predictionRequest = pr;
         this.userID = userID;
     }
 
+    /**
+     * Executes the prediction script and returns the resulting predicted value.
+     *
+     * The method launches the configured Python interpreter with the prediction
+     * script and arguments, reads the script output searching for a line
+     * prefixed with "PREDICTION:", parses it as a float and returns it. If the
+     * external process fails, the method throws an exception. Interruptions
+     * cause the external process to be destroyed and the interrupt to be
+     * propagated.
+     *
+     * @return predicted value as Float
+     * @throws Exception on I/O errors, missing model or if the prediction fails
+     */
     public Float call() throws Exception {
         String script = ".\\src\\python_scripts\\predict.py";
         String python = ".\\.venv\\Scripts\\python.exe";

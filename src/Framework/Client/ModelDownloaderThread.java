@@ -12,7 +12,6 @@ import java.util.concurrent.*;
  * Creates a separate connection to the server, receives model data in chunks,
  * and writes them concurrently to disk using {@link ChunkWriterThread}.
  * 
- * @author Isaac Terés Espallargas
  */
 public class ModelDownloaderThread implements Runnable {
 

@@ -10,6 +10,15 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+
+/**
+ * Handles insertion of a new record into a dataset XML file in a thread-safe way.
+ *
+ * Each instance receives a {@link DatasetInsertRequest} and appends a new
+ * <record> element into the corresponding XML dataset file. Concurrent access
+ * to the same dataset file is synchronized using an internal lock map so that
+ * multiple threads can safely insert into different datasets in parallel.
+ */
 public class DatasetInserterThread implements Runnable{
 	
 	private DatasetInsertRequest inRequest;
@@ -17,10 +26,22 @@ public class DatasetInserterThread implements Runnable{
 	// To manage the synchronized access to the datasets files
 	private static final ConcurrentHashMap<String, Object> fileLocks = new ConcurrentHashMap<>();
 
+	/**
+	 * Constructs a DatasetInserterThread for the provided insert request.
+	 *
+	 * @param inRequest the DatasetInsertRequest containing the target dataset name
+	 *                  and the student record to insert
+	 */
 	public DatasetInserterThread(DatasetInsertRequest inRequest) {
 		this.inRequest = inRequest;
 	}
 	
+	/**
+	 * Performs the insertion by loading the target XML file, creating a new
+	 * <record> element populated with the student's fields and saving the
+	 * document. The method synchronizes on a per-file lock to prevent
+	 * concurrent writes to the same dataset file.
+	 */
 	public void run() {
 
 		String fileName = this.inRequest.getDatasetName();
@@ -44,6 +65,8 @@ public class DatasetInserterThread implements Runnable{
 				
 				Element root = datasetXML.getDocumentElement();
 
+				// Remove the first record, so the datasets keep updated with the latest
+				// records. Plust, it mantains the size. 
 				NodeList records = root.getElementsByTagName("record");
 				if(records.getLength() >0){
 					Node firstRecord =records.item(0); 

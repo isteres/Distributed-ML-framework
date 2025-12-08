@@ -1,3 +1,12 @@
+"""Lightweight prediction CLI used by the server.
+
+Loads a pickled preprocessing+model pipeline and prints a single-line
+prediction to stdout using the format `PREDICTION:<value>`. On success the
+script exits with code 0; on error it writes a message to stderr and exits
+with code 1. This simple contract makes it easy for the Java server to parse
+results and impose timeouts on the subprocess.
+"""
+
 import argparse
 import pickle
 import pandas as pd
@@ -5,6 +14,12 @@ import sys
 
 
 def main():
+    """Parse CLI args, load the model pipeline and print a single prediction.
+
+    The function expects model input fields that match the XML dataset names
+    used during training. The printed output is intentionally minimal and
+    machine-parseable.
+    """
     parser = argparse.ArgumentParser(description="Predict salary using trained model")
     parser.add_argument("--model", required=True, help="Path to trained model (.pkl)")
     parser.add_argument("--country", required=True, help="Country")

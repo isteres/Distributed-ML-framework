@@ -6,7 +6,6 @@ import java.io.Serializable;
  * 
  * Contains the dataset name and the worker data to be inserted.
  * 
- * @author Isaac Terés Espallargas
  */
 public class DatasetInsertRequest implements Serializable {
 

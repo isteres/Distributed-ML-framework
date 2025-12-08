@@ -9,7 +9,6 @@ package Framework.Domain.Enums;
  * 
  * The main goal of this class was to reduce the incossistencies when dealing with categorical data.
  * 
- * @author Isaac Terés Espallargas
  */
 public class StudentEnums {
 

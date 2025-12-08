@@ -19,7 +19,6 @@ import java.io.Serializable;
  * 
  * In the case of predictions, the salary field can be null, as it is the target variable to predict.
  * 
- * @author Isaac Terés Espallargas
  */
 public class WorkerWithStudies implements Serializable {
 

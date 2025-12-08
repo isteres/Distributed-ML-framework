@@ -7,17 +7,37 @@ import java.util.TimerTask;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
+/**
+ * Scheduled task that triggers automatic training of server models.
+ *
+ * The task launches multiple {@link ModelTrainerThread} jobs in parallel to
+ * train a set of server-owned models (one per supported algorithm). It uses
+ * a {@link CyclicBarrier} to synchronize the simultaneous start of workers
+ * and a {@link CountDownLatch} to wait for completion before shutting down
+ * the internal executor.
+ */
 public class DailyTrainingTask extends TimerTask {
 
     private static final Logger LOGGER = Logger.getLogger(DailyTrainingTask.class.getName());
 
     private String dataset;
 
+    /**
+     * Constructs a DailyTrainingTask that will train models using the given
+     * dataset file name.
+     *
+     * @param dataset the dataset file name to use for scheduled training
+     */
     public DailyTrainingTask(String dataset) {
         this.dataset = dataset;
     }
 
-    @Override
+    /**
+     * Executes the scheduled training workflow: creates a fixed thread pool,
+     * schedules training jobs for different algorithms, starts them in a
+     * parallel manner and waits for all to finish. Logs progress and
+     * ensures proper shutdown on interruption or errors.
+     */
     public void run() {
         
         LOGGER.info("[SERVER] Starting automatic daily model training...");
@@ -57,6 +77,15 @@ public class DailyTrainingTask extends TimerTask {
         }
     }
 
+    /**
+     * Helper that builds a {@link TrainingRequest} pre-populated with sensible
+     * defaults for the given algorithm and model name. The returned request
+     * will have its dataset set to the task's dataset.
+     *
+     * @param modelName the name to assign to the trained model
+     * @param algorithm the algorithm identifier (e.g. "RandomForest")
+     * @return a configured TrainingRequest instance
+     */
     private TrainingRequest createTrainingRequest(String modelName, String algorithm) {
         Map<String, String> hyperparameters = new HashMap<>();
         hyperparameters.put("algorithm", algorithm);

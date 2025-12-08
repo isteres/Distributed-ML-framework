@@ -7,9 +7,11 @@ import java.io.Serializable;
  * Represents a chunk of a machine learning model file for streaming transmission.
  * 
  * Used by {@link Framework.Server.ModelSenderThread} and {@link Framework.Client.ModelDownloaderThread}
- * to transfer large model files in smaller, manageable pieces over the network.
+ * to transfer large model files in smaller, manageable pieces over the network. The main goal of 
+ * this class is to be able to read the whole model file in parallel into chunks and send them afterwards. 
+ * With no need to send it in order, a {@link java.io.RandomAccessFile} will write the chunks to disk using the
+ * correct position information contained in each chunk.
  * 
- * @author Isaac Terés Espallargas
  */
 public class ModelChunk implements Serializable {
     private static final long serialVersionUID = 1L;

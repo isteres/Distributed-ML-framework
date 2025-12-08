@@ -5,27 +5,64 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
+/**
+ * Client class represents a distributed ML framework client that communicates with a remote server.
+ * 
+ * This class handles:
+ * - Socket connection management with the server
+ * - User authentication (sign-in)
+ * - Dataset record insertion
+ * - Model training requests
+ * - Model inference predictions
+ * - Model downloading from the server
+ * - Inactivity timeout monitoring to disconnect idle clients
+ * 
+ * The client provides an interactive console interface for users to manage their ML models
+ * and participate in collaborative machine learning training.
+ */
 public class Client {
 
     private final String SERVER_HOST = "localhost";
     private final int SERVER_PORT = 16666;
-    private static final int INACTIVITY_TIMEOUT = 60 * 1000;
+    private static final int INACTIVITY_TIMEOUT = 5 * 60 * 1000;
 
     private Scanner sc;
     private String userID;
     private final ConsoleInterface console;
     private InactivityWatcher inactivityWatcher;
 
+    /**
+     * Constructs a Client instance with a specified user ID.
+     *
+     * @param userID the unique identifier for the client user
+     */
     public Client(String userID) {
         this.sc = new Scanner(System.in);
         this.userID = userID;
         this.console = new ConsoleInterface(sc);
     }
 
+    /**
+     * Retrieves the user ID of this client.
+     *
+     * @return the user ID
+     */
     public String getUserID() {
         return userID;
     }
 
+    /**
+     * Initializes the client and establishes connection with the server.
+     * 
+     * This method:
+     * - Creates a socket connection to the server
+     * - Initializes input/output streams (OOS before OIS to avoid deadlocks)
+     * - Starts an inactivity watcher thread
+     * - Authenticates the user via sign-in
+     * - Displays menu and processes user selections in a loop
+     * - Handles all client operations (data insertion, training, inference, downloads)
+     * - Automatically disconnects on inactivity or user exit
+     */
     public void initialize() {
         // Highlight the OOS initialized before the OIS to avoid deadlocks
         try (Socket socket = new Socket(SERVER_HOST, SERVER_PORT); 
@@ -100,7 +137,13 @@ public class Client {
         }
     }
 
-
+    /**
+     * Authenticates the client user with the server using the user ID.
+     *
+     * @param oos ObjectOutputStream for sending data to the server
+     * @param ois ObjectInputStream for receiving data from the server
+     * @throws RuntimeException if user is already signed in from another device
+     */
     private void signIn(ObjectOutputStream oos, ObjectInputStream ois) throws RuntimeException {
         try {
             oos.writeBytes("SIGN_IN\r\n");
@@ -116,10 +159,19 @@ public class Client {
         }
     }
 
+    /**
+     * Sends a student/worker record to the server for dataset insertion.
+     * 
+     * Allows the user to select from available datasets and insert their personal data.
+     *
+     * @param oos ObjectOutputStream for sending data to the server
+     * @param ois ObjectInputStream for receiving data from the server
+     * @param student the WorkerWithStudies object containing student data
+     */
     private void sendRecordToServer(ObjectOutputStream oos, ObjectInputStream ois, WorkerWithStudies student) {
 
         try {
-            // Send command
+            // Send command internal protocol
             oos.writeBytes("INSERT_DATASET\r\n");
             oos.flush();
             System.out.println("\r\nIn which dataset do you want to insert your record?");
@@ -160,6 +212,15 @@ public class Client {
 
     }
 
+    /**
+     * Sends a model training request to the server.
+     * 
+     * Prompts user to select a dataset and sends training configuration with hyperparameters.
+     *
+     * @param oos ObjectOutputStream for sending data to the server
+     * @param ois ObjectInputStream for receiving data from the server
+     * @param tr the TrainingRequest containing algorithm and hyperparameters
+     */
     private void sendTrainingRequestToServer(ObjectOutputStream oos, ObjectInputStream ois, TrainingRequest tr) {
         try {
             oos.writeBytes("TRAIN_MODEL\r\n");
@@ -201,6 +262,13 @@ public class Client {
         }
     }
 
+    /**
+     * Selects a model from a list of available models.
+     *
+     * @param models the list of available model names
+     * @param prompt the prompt message to display to the user
+     * @return the selected model name
+     */
     private String selectModelFromList(List<String> models, String prompt) {
         System.out.println("\nAvailable models:");
         
@@ -238,6 +306,13 @@ public class Client {
         }
     }
 
+    /**
+     * Sends an inference request to the server for salary prediction.
+     *
+     * @param oos ObjectOutputStream for sending data to the server
+     * @param ois ObjectInputStream for receiving data from the server
+     * @param ir the InferenceRequest containing student data and model selection
+     */
     private void sendInferenceRequestToServer(ObjectOutputStream oos, ObjectInputStream ois, InferenceRequest ir) {
         try {
             oos.writeBytes("STUDENT_INFERENCE\r\n");
@@ -270,6 +345,13 @@ public class Client {
         }
     }
 
+
+    /**
+     * Downloads a selected model from the server in a background thread.
+     *
+     * @param oos ObjectOutputStream for sending data to the server
+     * @param ois ObjectInputStream for receiving data from the server
+     */
     private void downloadModelFromServer(ObjectOutputStream oos, ObjectInputStream ois) {
         try {
             oos.writeBytes("LIST_MODELS\r\n");

@@ -25,10 +25,19 @@ public class ServerDatabase {
         initializeDatabase();
     }
 
+    /**
+     * Returns the singleton instance of the ServerDatabase.
+     *
+     * @return the single ServerDatabase instance used by the application
+     */
     public static ServerDatabase getInstance() {
         return instance;
     }
 
+    /**
+     * Ensures the XML database file exists and creates a minimal document structure
+     * when the file is not present.
+     */
     private void initializeDatabase() {
         if (!XMLfile.exists()) {
             try {
@@ -48,6 +57,15 @@ public class ServerDatabase {
         }
     }
 
+    /**
+     * Registers a new user in the XML database. If the user already exists this
+     * method returns {@code true}. On success the new user element is appended to
+     * the root and the document is saved.
+     *
+     * @param userIdentification the unique identifier for the user
+     * @return {@code true} if the user already exists or registration succeeded,
+     *         {@code false} on invalid input or failure
+     */
     public synchronized boolean registerUser(String userIdentification) {
         if (userIdentification == null || userIdentification.trim().isEmpty()) {
             LOGGER.severe("[DATABASE] Username cannot be null or empty");
@@ -78,6 +96,18 @@ public class ServerDatabase {
         return false;
     }
 
+    /**
+     * Registers metadata for a trained model under the specified user element.
+     * The method appends a new <Model> element containing name, algorithm,
+     * dataset and performance metrics, then saves the document.
+     *
+     * @param userID the owner user ID
+     * @param modelName the name of the trained model
+     * @param algorithm the algorithm used to train the model
+     * @param dataset the dataset used for training
+     * @param r2Score model R^2 score
+     * @param mae model mean absolute error
+     */
     public synchronized void registerTrainedModel(String userID, String modelName, String algorithm, 
                                                    String dataset, float r2Score, float mae) {
         try {
@@ -141,6 +171,13 @@ public class ServerDatabase {
         }
     }
 
+    /**
+     * Finds and returns the <User> element matching the given userID.
+     *
+     * @param doc the parsed XML document
+     * @param userID the user identifier to search for
+     * @return the matching User element, or {@code null} if not found
+     */
     private Element findUserElement(Document doc, String userID) {
         NodeList users = doc.getElementsByTagName("User");
         for (int i = 0; i < users.getLength(); i++) {
@@ -152,6 +189,14 @@ public class ServerDatabase {
         return null;
     }
 
+    /**
+     * Checks whether a user with the given identification already exists in the
+     * provided document.
+     *
+     * @param doc the parsed XML document
+     * @param userIdentification the user identifier to check
+     * @return {@code true} if the user exists, {@code false} otherwise
+     */
     private boolean userExists(Document doc, String userIdentification) {
         NodeList users = doc.getElementsByTagName("User");
         for (int i = 0; i < users.getLength(); i++) {
@@ -163,10 +208,21 @@ public class ServerDatabase {
         return false;
     }
 
+    /**
+     * Returns the current timestamp formatted as "HH:mm:ss dd-MM-yyyy".
+     *
+     * @return formatted current timestamp string
+     */
     private static String getCurrentTimeStamp() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy"));
     }
 
+    /**
+     * Persists the provided DOM Document to the configured XML file using a
+     * Transformer. Configures indentation and attaches the DTD reference.
+     *
+     * @param doc the DOM Document to save
+     */
     private void saveDocument(Document doc) {
         try {
             TransformerFactory tf = TransformerFactory.newInstance();

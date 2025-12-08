@@ -62,7 +62,6 @@ public class InactivityWatcher extends Thread {
      * Periodically checks elapsed time since last activity and sets the timeout flag
      * when the threshold is exceeded. Reduces CPU usage by checking every 5 seconds.
      */
-    @Override
     public void run() {
         while (running) {
             try {

@@ -7,7 +7,6 @@ import java.util.Map;
  * 
  * Contains the model name, hyperparameters, and the dataset to use for training.
  * 
- * @author Isaac Terés Espallargas
  */
 public class TrainingRequest implements Serializable {
 

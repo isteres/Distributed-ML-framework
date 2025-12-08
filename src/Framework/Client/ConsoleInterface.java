@@ -5,6 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * ConsoleInterface class provides a command-line user interface for the distributed ML framework.
+ * 
+ * This class handles all user interactions including:
+ * - Displaying menus and options to the user
+ * - Collecting personal and academic data through interactive forms
+ * - Gathering machine learning training configurations and hyperparameters
+ * - Validating and parsing user input with error handling
+ * 
+ * The interface supports multiple machine learning algorithms (Random Forest, Gradient Boosting,
+ * Linear Regression, and Neural Networks) with algorithm-specific hyperparameter configuration.
+ * 
+ */
 public class ConsoleInterface {
 
     private final Scanner sc;
@@ -15,10 +28,18 @@ public class ConsoleInterface {
     final String DEFAULT_ACTIVATION = "relu";
     final String DEFAULT_MAX_ITER = "400";
 
+    /**
+     * Constructs a ConsoleInterface with the given Scanner.
+     *
+     * @param sc the Scanner to read user input
+     */
     public ConsoleInterface(Scanner sc) {
         this.sc = sc;
     }
 
+    /**
+     * Displays the main menu with available options.
+     */
     public void printMenu() {
         System.out.println("\r\n================================ CLIENT MENU ================================");
         System.out.println("1) Fill a form with your first salary and help us to improve our datasets.");
@@ -29,6 +50,12 @@ public class ConsoleInterface {
         System.out.print("Select an option: ");
     }
 
+    /**
+     * Collects student/worker information from the user.
+     *
+     * @param withSalary if true, prompts for salary input; otherwise used for prediction
+     * @return a WorkerWithStudies object containing the user's information
+     */
     public WorkerWithStudies fillStudentForm(boolean withSalary) {
         WorkerWithStudies student = null;
         boolean validInput = false;
@@ -81,6 +108,11 @@ public class ConsoleInterface {
         return student;
     }
 
+    /**
+     * Collects training configuration from the user including algorithm and hyperparameters.
+     *
+     * @return a TrainingRequest object with the model name and hyperparameters
+     */
     public TrainingRequest fillTrainingRequest() {
         System.out.println("\r\n--- Training Request Form ---");
         
@@ -248,6 +280,9 @@ public class ConsoleInterface {
         return new TrainingRequest(modelName, hyperparameters);
     }
 
+    /*
+    * Reads a float value from user input with error handling.
+    */
     private float readFloat() {
         while (true) {
             try {
@@ -258,6 +293,9 @@ public class ConsoleInterface {
         }
     }
 
+    /*
+    * Reads an integer value from user input with error handling.
+    */
     private int readInt() {
         while (true) {
             try {

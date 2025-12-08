@@ -7,8 +7,21 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
-// In this class we find the Server that will be waiting connections. It will
-// distribute every connection in a different thread in order to improve the efficiency
+
+/**
+ * Central server entry point for the Distributed ML Framework.
+ *
+ * Responsibilities:
+ * - Listen for incoming client connections and dispatch handlers using a thread pool
+ * - Maintain a list of connected users and access to the server-side database
+ * - Schedule recurring tasks such as daily model training
+ * - Provide utility methods to list available models, construct model paths
+ *   and enumerate available datasets on disk
+ *
+ * The server uses a cached thread pool for handling each connection in a
+ * separate thread and relies on the `ServerDatabase` singleton to persist
+ * metadata about users and trained models.
+ */
 public class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
@@ -56,6 +69,14 @@ public class Server {
 
     }
 
+    /**
+     * Returns a list of available model names for the given user.
+     * Server-owned models are always included and user-specific models are
+     * appended when the user is not the special SERVER account.
+     *
+     * @param userID owner identifier to include user-specific models (may be null)
+     * @return list of available model names
+     */
     public static List<String> getAvailableModels(String userID) {
         List<String> allModels = new ArrayList<>();
         
@@ -71,6 +92,14 @@ public class Server {
     }
 
  
+    /**
+     * Reads the models directory for the provided owner and returns model
+     * names found in that directory. Only files matching the pattern
+     * "*_model.pkl" are considered and returned without the suffix.
+     *
+     * @param ownerID directory name representing the owner of models
+     * @return list of model base names for the owner
+     */
     private static List<String> getModelsFromDirectory(String ownerID) {
         List<String> models = new ArrayList<>();
         File modelDir = new File("TrainedModels", ownerID);
@@ -91,6 +120,15 @@ public class Server {
         return models;
     }
 
+    /**
+     * Builds and returns the filesystem path to a model file given its name
+     * and the owning user. Server models are stored under the special
+     * "SERVER" folder and prefixed with "Server_" when appropriate.
+     *
+     * @param modelName the model's base name (without suffix)
+     * @param userID the owner user id used when model is not a server model
+     * @return the platform-relative path to the model file
+     */
     public static String getModelPath(String modelName, String userID) {
         if (modelName.startsWith("Server_")) {
             return "TrainedModels\\SERVER\\" + modelName + "_model.pkl";
@@ -99,6 +137,13 @@ public class Server {
     }
 
 
+    /**
+     * Scans the `Datasets` directory and returns a list of dataset file names
+     * excluding DTD files. If the directory is missing, an empty list is
+     * returned and an error is logged.
+     *
+     * @return list of dataset filenames present in the `Datasets` directory
+     */
     private static List<String> getDatasetFiles() {
         // Returns a list with all the files located in the directory "Datasets"
         File dir = new File("Datasets");

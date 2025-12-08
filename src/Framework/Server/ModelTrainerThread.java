@@ -7,6 +7,16 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
+
+/**
+ * Executes a model training job by invoking the project's Python training script.
+ *
+ * This runnable prepares the command line, launches the Python process, parses
+ * basic training metrics (R2, MAE) from the process output and registers the
+ * trained model metadata in the `ServerDatabase` when appropriate. It supports
+ * optional synchronization using a {@link CyclicBarrier} to align simultaneous
+ * starts and a {@link CountDownLatch} to signal completion.
+ */
 public class ModelTrainerThread implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(ModelTrainerThread.class.getName());
@@ -16,6 +26,13 @@ public class ModelTrainerThread implements Runnable {
     private CyclicBarrier startBarrier;
     private CountDownLatch finishLatch;
 
+    /**
+     * Constructs a ModelTrainerThread for the given training request and user.
+     * This constructor does not use synchronization primitives.
+     *
+     * @param tr the training request containing model name, dataset and hyperparameters
+     * @param userID the user id that will own the trained model
+     */
     public ModelTrainerThread(TrainingRequest tr, String userID) {
         this.trainingRequest = tr;
         this.userID = userID;
@@ -23,6 +40,17 @@ public class ModelTrainerThread implements Runnable {
         this.finishLatch = null;
     }
 
+    /**
+     * Constructs a ModelTrainerThread that participates in optional synchronization.
+     * The {@code startBarrier} will be awaited before training begins, so 
+     * all the threads with that barrier will run in parallel and the
+     * {@code finishLatch} will be decremented when training completes.
+     *
+     * @param tr the training request containing model name, dataset and hyperparameters
+     * @param userID the user id that will own the trained model
+     * @param startBarrier barrier to synchronize start of training across threads (may be null)
+     * @param finishLatch latch to signal completion to other components (may be null)
+     */
     public ModelTrainerThread(TrainingRequest tr, String userID, CyclicBarrier startBarrier, CountDownLatch finishLatch) {
         this.trainingRequest = tr;
         this.userID = userID;
@@ -30,6 +58,12 @@ public class ModelTrainerThread implements Runnable {
         this.finishLatch = finishLatch;
     }
 
+    /**
+     * Executes the training process by launching the Python script defined by
+     * the project. Parses training output for metrics, waits for process
+     * termination and registers model metadata on success. Any synchronization
+     * primitives provided at construction are respected.
+     */
     public void run() {
         try {
 

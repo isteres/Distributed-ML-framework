@@ -1,3 +1,9 @@
+"""Model factory helpers.
+
+Provides a small factory around scikit-learn regressors and a helper to parse
+MLP hidden-layer specifications supplied as comma-separated strings.
+"""
+
 from typing import Optional, Tuple
 
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
@@ -6,6 +12,11 @@ from sklearn.neural_network import MLPRegressor
 
 
 def _parse_hidden_layers(s: Optional[str]) -> Tuple[int, ...]:
+    """Parse a comma-separated hidden-layer specification into a tuple.
+
+    Examples: "64,32" -> (64, 32). If `s` is None, empty or the literal
+    "None", a sensible default `(100, 50)` is returned.
+    """
     if s is None or s == "None" or str(s).strip() == "":
         return (100, 50)
     parts = [p.strip() for p in str(s).split(",") if p.strip() != ""]
@@ -13,6 +24,13 @@ def _parse_hidden_layers(s: Optional[str]) -> Tuple[int, ...]:
 
 
 class ModelFactory:
+    """Factory for scikit-learn regressors.
+
+    Use `create(...)` with an `algorithm` name to obtain a preconfigured
+    estimator instance. Supported values: ``LinearRegression``,
+    ``RandomForest``, ``GradientBoosting``, ``NeuralNetwork``.
+    """
+
     @staticmethod
     def create(
         algorithm: str,
@@ -23,6 +41,12 @@ class ModelFactory:
         max_iter: int = 200,
         random_state: int = 42,
     ):
+        """Return an estimator instance configured for the requested algorithm.
+
+        Parameters are applied as sensible defaults for each algorithm. The
+        method returns a scikit-learn estimator ready to be included in a
+        `Pipeline`.
+        """
         if algorithm == "RandomForest":
             return RandomForestRegressor(
                 n_estimators=int(n_estimators),

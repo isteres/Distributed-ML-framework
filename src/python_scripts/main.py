@@ -1,3 +1,13 @@
+"""Train models from an XML dataset and serialize a preprocessing+model pipeline.
+
+This module exposes a `train_model` function used by the Java server to
+launch training jobs (via a subprocess). It builds a preprocessing pipeline,
+trains a scikit-learn estimator according to the requested algorithm and
+parameters, prints basic metrics (MAE, R2) to stdout and writes the trained
+pipeline to a pickle file at `output_path`.
+
+"""
+
 import argparse
 import pickle
 

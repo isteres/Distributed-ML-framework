@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
+/**
+ * Handles a single client connection. Reads textual commands from the client
+ * input stream and dispatches work to the server's thread pool. Responsibilities
+ * include managing sign-in, dataset insertion, model training requests,
+ * inference requests with timeouts, model listing and handling dedicated
+ * download sessions.
+ */
 public class ConnectionHandler implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(ConnectionHandler.class.getName());
@@ -21,6 +28,15 @@ public class ConnectionHandler implements Runnable {
     // The same user cannnot be connected from different devices at the same time
     private List<String> connectedUsers;
 
+    /**
+     * Creates a connection handler for a newly accepted socket.
+     *
+     * @param s the client socket
+     * @param p the executor service used to run background tasks
+     * @param d the list of available dataset names
+     * @param db reference to the server database helper
+     * @param connectedUsers shared list tracking currently connected user IDs
+     */
     public ConnectionHandler(Socket s, ExecutorService p, List<String> d, ServerDatabase db, List<String> connectedUsers) {
         this.client = s;
         this.userID = null;
@@ -30,14 +46,35 @@ public class ConnectionHandler implements Runnable {
         this.connectedUsers = connectedUsers;
     }
 
+    /**
+     * Returns the currently signed-in user ID for this connection, or
+     * null if no user is signed in yet.
+     *
+     * @return current user ID or null
+     */
     public String getUserID() {
         return userID;
     }
 
+    /**
+     * Sets the user ID associated with this connection handler.
+     *
+     * @param userID the user identifier to associate with this connection
+     */
     public void setUserID(String userID) {
         this.userID = userID;    
     }
 
+    /**
+     * Registers a user as connected. If the same user is already present in
+     * `connectedUsers`, writes a warning message to the client and closes the
+     * connection streams. Otherwise, registers the user in the persistent
+     * database (if needed) and sends a welcome message.
+     *
+     * @param userID the signing-in user's identifier
+     * @param oos the client's output stream (used to send text responses)
+     * @param ois the client's input stream
+     */
     public void manageConnectedUser(String userID, ObjectOutputStream oos, ObjectInputStream ois) {
         if (connectedUsers.contains(userID)) {
             LOGGER.warning("[" + userID + "] User already connected from another device.");
@@ -70,6 +107,14 @@ public class ConnectionHandler implements Runnable {
         LOGGER.info("[" + userID + "] Signed in successfully.");
     }
 
+    /**
+     * Cleans up connection resources for a disconnected client: closes the
+     * provided object streams, removes the user from the shared connected
+     * users list (if signed in) and logs the disconnect.
+     *
+     * @param oin the client's input stream (may be null)
+     * @param oout the client's output stream (may be null)
+     */
     public void manageDisconnectedUser(ObjectInputStream oin, ObjectOutputStream oout) {
         try {
             // This will manage the Socket closing too
@@ -91,6 +136,13 @@ public class ConnectionHandler implements Runnable {
     }
     
 
+    /**
+     * Main connection loop. Processes high-level textual commands coming from
+     * the client and dispatches appropriate handlers or background tasks.
+     * Key supported commands: SIGN_IN, INSERT_DATASET, TRAIN_MODEL,
+     * STUDENT_INFERENCE (with a 30s timeout), LIST_MODELS and DOWNLOAD_SESSION.
+     * Ensures streams and socket are closed when the connection finishes.
+     */
     public void run() {
 
         ObjectOutputStream oos = null;

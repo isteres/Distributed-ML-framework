@@ -11,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
  * Executes concurrently with other chunk writers to assemble a complete model file
  * downloaded from the server. Uses {@link CountDownLatch} to synchronize completion.
  * 
- * @author Isaac Terés Espallargas
  */
 public class ChunkWriterThread implements Runnable {
 
@@ -32,6 +31,15 @@ public class ChunkWriterThread implements Runnable {
         this.latch = latch;
     }
 
+    /**
+     * Writes the model chunk data to the file at the specified position.
+     * 
+     * This method:
+     * - Seeks to the chunk's start position in the RandomAccessFile
+     * - Writes the chunk data to disk
+     * - Handles any IOException that may occur during writing
+     * - Signals completion via CountDownLatch to allow synchronization with other chunk writers
+     */
     public void run() {
 
         try {
