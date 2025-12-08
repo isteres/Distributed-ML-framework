@@ -44,7 +44,7 @@ public class Server {
         try (ServerSocket server = new ServerSocket(16666)) {
             LOGGER.info("[SERVER] Listening on port " + SERVER_PORT);
 
-            dailyTimer.scheduleAtFixedRate(new DailyTrainingTask("dataset10000.xml"), 0, 124 * 60 * 60 * 1000);
+            dailyTimer.scheduleAtFixedRate(new DailyTrainingTask("dataset10000.xml"), 0, 24 * 60 * 60 * 1000);
             LOGGER.info("[SERVER] Daily training task scheduled.");
             
             while (true) {
