@@ -50,5 +50,10 @@ Short description of the repository contents
 		 `data_loader.py`. In `requirements.txt` you can find all the dependencies needed
    		to execute the scripts. 
 
+## Future improvements
+- Change the routes to the python scripts, so the server can be launched from Linux and Windows
+environment(now it has Windows routes).
+- Split the server workload in different nodes depending on the amount of users connected. So
+the server doesn't get overloaded. 
 
 
