@@ -42,7 +42,7 @@ Short description of the repository contents (by package)
 	- Python helper scripts used by the server to perform the actual ML work.
 		The Java server launches these scripts as subprocesses and parses their
 		output for metrics and prediction values.
-	- Key files: `main.py` (training CLI that builds and serializes a pipeline),
+	- Key files: `main.py` (training CLI that builds the training pipeline),
 		`predict.py` (prediction CLI that prints `PREDICTION:<value>`),
 		`model_builder.py`, `preprocessor_builder.py`, `data_loader.py`.
 
